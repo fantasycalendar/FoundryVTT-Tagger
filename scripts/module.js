@@ -235,16 +235,16 @@ const Tagger = {
 
 }
 
-const configHandler = {
-	"TokenConfig": Tagger._handleTokenConfig,
-	"TileConfig": Tagger._handleTileConfig,
-	"DrawingConfig": Tagger._handleDrawingConfig,
-	"WallConfig": Tagger._handleGenericConfig,
-	"LightConfig": Tagger._handleGenericConfig,
-	"AmbientSoundConfig": Tagger._handleGenericConfig,
-	"MeasuredTemplateConfig": Tagger._handleGenericConfig,
-	"NoteConfig": Tagger._handleGenericConfig
-}
+const configHandler = [
+	{ config: TokenConfig, method: Tagger._handleTokenConfig },
+	{ config: TileConfig, method: Tagger._handleTileConfig },
+	{ config: DrawingConfig, method: Tagger._handleDrawingConfig },
+	{ config: WallConfig, method: Tagger._handleGenericConfig },
+	{ config: LightConfig, method: Tagger._handleGenericConfig },
+	{ config: AmbientSoundConfig, method: Tagger._handleGenericConfig },
+	{ config: MeasuredTemplateConfig, method: Tagger._handleGenericConfig },
+	{ config: NoteConfig, method: Tagger._handleGenericConfig }
+]
 
 Hooks.once('ready', async function() {
 	window.Tagger = Tagger;
@@ -252,14 +252,14 @@ Hooks.once('ready', async function() {
 
 Hooks.on("renderFormApplication", (app, html, options) => {
 	if(!app) return;
-	let type = app?.constructor?.name ?? false;
-	if(!type || !Object.keys(configHandler).includes(type)) return;
-	configHandler[type](app, html, true);
+	let found = configHandler.find(t => app instanceof t.config);
+	if(!found) return;
+	found.method(app, html, true);
 })
 
 Hooks.on("closeFormApplication", (app, html, options) => {
 	if(!app) return;
-	let type = app?.constructor?.name ?? false;
-	if(!type || !Object.keys(configHandler).includes(type)) return;
+	let found = configHandler.find(t => app instanceof t.config);
+	if(!found) return;
 	Tagger._fixUpTags(app)
 })
