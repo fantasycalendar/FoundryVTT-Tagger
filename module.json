@@ -1,7 +1,7 @@
 {
-  "name": "module",
-  "title": "New Module",
-  "description": "",
+  "name": "global-tags",
+  "title": "Global Tags",
+  "description": "A global tags manager for easy manipulation of objects of similar types",
   "version": "This is auto replaced",
   "library": "false",
   "manifestPlusVersion": "1.0.0",
@@ -14,27 +14,8 @@
       "discord": "discordID#0001"
     }
   ],
-  "dependencies": [
-
-  ],
-  "conflicts": [
-    
-  ],
   "esmodules": [
     "/scripts/module.js"
-  ],
-  "scripts": [
-    "/scripts/lib/lib.js"
-  ],
-  "styles": [
-    "/styles/module.css"
-  ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "languages/en.json"
-    }
   ],
   "url": "This is auto replaced",
   "manifest": "This is auto replaced",
