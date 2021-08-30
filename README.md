@@ -4,7 +4,7 @@ This module allows you to tag objects and retrieve them just as easy.
 
 ## Download
 
-`https://github.com/Haxxer/FoundryVTT-GlobalTags/releases/latest/download/module.json`
+`https://github.com/Haxxer/FoundryVTT-Tagger/releases/latest/download/module.json`
 
 ## Dialogs
 
