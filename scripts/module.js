@@ -96,7 +96,7 @@ class GlobalTagsManager{
 					}else{
 						inTags.forEach(t => tags.delete(t));
 					}
-					await obj.setFlag("global-tags", "tags", inTags);
+					await obj.setFlag("global-tags", "tags", Array.from(tags));
 				}else{
 					await obj.unsetFlag("global-tags", "tags");
 				}
