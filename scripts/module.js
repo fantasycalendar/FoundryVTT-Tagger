@@ -123,8 +123,6 @@ class GlobalTagsManager{
 			return matches.length === inTags.length;
 		}
 
-		console.log(matches);
-
 		return matches.length;
 	}
 
