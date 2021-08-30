@@ -58,7 +58,7 @@ const Tagger = {
 			resolve(options.objects.filter(obj => {
 				let tags = Tagger.getTags(obj);
 				return tags && Tagger._testTags(inTags, tags, options);
-			}));
+			}).map(obj => obj?._object ?? obj));
 
 		});
 	},
