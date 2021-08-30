@@ -20,15 +20,18 @@ Gets objects with matching tags provided to the method.
 `Tagger.getByTag(string|array, options={})`
 
 ```
-@param 	{string|array}	inTags	 An array of tags or a string of tags (separated by commas) that will be searched for
+@param 	{string|array}	inTags	 An array of tags or a string of tags (separated by commas)
+                                 that will be searched for
+                                 
 @param 	{object} 	options	 An optional object that can contain any of the following:
-                                    - matchAll {boolean}         - whether the object must contain all of the provided tags
-                                    - caseInsensitive {boolean}	 - whether the search is case insensitive (capitals vs lowercase is not considered)
+                                    - matchAll {boolean}         - whether the object must contain all of
+                                                                   the provided tags
+                                    - caseInsensitive {boolean}	 - whether the search is case insensitive
                                     - objects {array} 	         - an array of objects to test
                                     - ignore {array}	         - an array of objects to ignore
                                     - sceneId {string}	         - a string ID for the scene to search in
                                     
-@returns {Promise} 		A promise that will resolve when all objects have been found, returning an array of objects
+@returns {Promise}      A promise that will resolve when all objects have been found, returning an array
 ```
 
 Examples:
@@ -55,10 +58,11 @@ Adds tags to an object
 `Tagger.addTags(object|array, string|array)`
 
 ```
-@param 	{object|array}	inObjects	An object or a list of objects to add tags to
-@param 	{string|array} 	inTags		An array of tags or a string of tags (separated by commas) that will be added to the object
+@param 	{object|array}	inObjects       An object or a list of objects to add tags to
+@param 	{string|array} 	inTags          An array of tags or a string of tags (separated by commas) that will
+                                        be added to the object
 
-@returns {promise} 			A promise that will resolve when the object's tags have been updated
+@returns {promise}                      A promise that will resolve when the object's tags have been updated
 ```
 
 ### Remove Tags
@@ -68,10 +72,11 @@ Removes tags from an object
 `Tagger.removeTags(object|array, string|array)`
 
 ```
-@param 	{object|array}	inObjects	An object or a list of objects to remove tags from
-@param 	{string|array} 	inTags		An array of tags or a string of tags (separated by commas) that will be removed from the object
+@param 	{object|array}	inObjects       An object or a list of objects to remove tags from
+@param 	{string|array} 	inTags          An array of tags or a string of tags (separated by commas) that will
+                                        be removed from the object
 
-@returns {promise} 			A promise that will resolve when the object's tags have been updated
+@returns {promise}                      A promise that will resolve when the object's tags have been updated
 ```
 
 ### Clear All Tags
