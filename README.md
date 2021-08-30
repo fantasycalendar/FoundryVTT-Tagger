@@ -10,7 +10,7 @@ This module allows you to tag objects and retrieve them just as easy.
 
 Get all objects on the canvas with specific tags with:
 ```js
-GlobalTags.getByTag(array|string)
+GlobalTags.getByTag(string|array)
 ```
 
 ### Add Tags
