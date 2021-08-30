@@ -24,11 +24,11 @@ Gets objects with matching tags provided to the method.
                                  that will be searched for
                                  
 @param 	{object} 	options	 An optional object that can contain any of the following:
-                                    - matchAll {boolean}         - whether the object must contain all of
+                                    - matchAll {boolean}         - If true, the object must contain only
                                                                    the provided tags
                                     - caseInsensitive {boolean}	 - whether the search is case insensitive
                                     - objects {array} 	         - an array of objects to test
-                                    - ignore {array}	         - an array of objects to ignore
+                                    - ignore {array}             - an array of objects to ignore
                                     - sceneId {string}	         - a string ID for the scene to search in
                                     
 @returns {Promise}      A promise that will resolve when all objects have been found, returning an array
@@ -37,7 +37,7 @@ Gets objects with matching tags provided to the method.
 Examples:
 
 - `Tagger.getByTag("tags")`
-- `Tagger.getByTag("tags, TO, LOOK, foR", { caseInsensitive: false })`
+- `Tagger.getByTag("tags, TO, LOOK, foR", { caseInsensitive: true })`
 - `Tagger.getByTag(["tags", "to", "look", "for"], { matchAll: true, sceneId: "8xjy4UUVoRcEYUNy" })`
 
 ### Get Tags
