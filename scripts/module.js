@@ -7,8 +7,8 @@ class GlobalTagsManager{
 	 * @returns {array} 						The tags on the objects in an array
 	 */
 	getTags(inObject){
-		if(inObject.document) inObject = inObject.document;
-		return inObject.getFlag("global-tags", "tags") || [];
+		if(inObject?.document) inObject = inObject.document;
+		return inObject?.getFlag("global-tags", "tags") || [];
 	}
 
 	/**
@@ -22,9 +22,8 @@ class GlobalTagsManager{
 
 		return new Promise(resolve => {
 
-			inTags = this._validateTags(inTags, "getByTag");
-
-			let testTags = inTags
+			inTags = this._validateTags(inTags, "getByTag")
+				.join(" ")
 				.replace(/[^A-Za-z0-9 .*_-]/g, "")
 				.replace(".", "\.")
 				.replace("*", "(.*?)")
@@ -34,81 +33,96 @@ class GlobalTagsManager{
 			let objs = new Set();
 			canvas.layers.forEach(l => {
 				l?.objects?.children.forEach(obj => {
-					let testObj = obj;
-					if (testObj.document) testObj = testObj.document;
-					let tags = this.getTags(testObj);
-					if (tags && this._testTags(testTags, tags.split(" "), options)) objs.add(obj);
+					let tags = this.getTags(obj);
+					if (tags && this._testTags(inTags, tags, options)) objs.add(obj);
 				});
 			})
 
 			resolve(Array.from(objs));
-
 		});
-
 	}
 
 	/**
 	 * Adds tags to an object
 	 *
-	 * @param 	{object} 		inObject	The object to add tags to
+	 * @param 	{object|array}	inObjects	An object or a list of objects to add tags to
 	 * @param 	{string|array} 	inTags		An array of tags or a string of tags (separated by spaces) that will be added to the object
 	 * @returns {promise} 					A promise that will resolve when the object's tags have been updated
 	 */
-	async addTags(inObject, inTags){
-
-		if(inObject.document) inObject = inObject.document;
-
+	async addTags(inObjects, inTags){
 		inTags = this._validateTags(inTags, "addTags");
-
-		let tags = this.getTags(inObject);
-
-		if(tags){
-			tags = new Set([...tags, ...inTags])
-		}else{
-			tags = new Set(inTags)
-		}
-
-		return await inObject.setFlag("global-tags", "tags", Array.from(tags))
-
+		return this._updateTags(inObjects, inTags);
 	}
 
 	/**
 	 * Removes tags from an object
 	 *
-	 * @param 	{object} 		inObject	The object to remove tags from
+	 * @param 	{object|array}	inObjects	An object or a list of objects to remove tags from
 	 * @param 	{string|array} 	inTags		An array of tags or a string of tags (separated by spaces) that will be removed from the object
 	 * @returns {promise} 					A promise that will resolve when the object's tags have been updated
 	 */
-	async removeTags(inObject, inTags){
-
-		if(inObject.document) inObject = inObject.document;
-
+	async removeTags(inObjects, inTags){
 		inTags = this._validateTags(inTags, "removeTags");
+		return this._updateTags(inObjects, inTags, false);
+	}
 
-		let tags = this.getTags(inObject);
+	/**
+	 * Removes all tags from an object
+	 *
+	 * @param 	{object|array}	inObjects	The object to remove all tags from
+	 * @returns {promise} 					A promise that will resolve when the object's tags have been updated
+	 */
+	async clearAllTags(inObjects){
+		return this._updateTags(inObjects, false);
+	}
 
-		if(tags) tags = new Set(tags)
-
-		inTags.forEach(t => {
-			tags.delete(t);
+	/**
+	 * Updates tags on the object
+	 *
+	 * @param 	{object|array}	inObjects	The object to remove all tags from
+	 * @param 	{array|boolean}	inTags		The tags to update the object with, or false if clearing all tags
+	 * @param 	{boolean}		isAdding		The tags to update the object with, or false if clearing all tags
+	 * @returns {promise} 					A promise that will resolve when the object's tags have been updated
+	 */
+	_updateTags(inObjects, inTags, isAdding = true ){
+		inObjects = this._validateObjects(inObjects);
+		return new Promise(async (resolve) => {
+			for(let obj of inObjects){
+				if(inTags){
+					let tags = this.getTags(obj);
+					if(tags) tags = new Set(tags);
+					if(isAdding){
+						tags = new Set([...tags, ...inTags]);
+					}else{
+						inTags.forEach(t => tags.delete(t));
+					}
+					await obj.setFlag("global-tags", "tags", inTags);
+				}else{
+					await obj.unsetFlag("global-tags", "tags");
+				}
+			}
+			resolve();
 		})
-
-		return await inObject.setFlag("global-tags", "tags", Array.from(tags))
-
 	}
 
 	_validateTags(inTags, functionName){
 		if(!(typeof inTags === "string" || Array.isArray(inTags))) throw new Error(`GlobalTags | ${functionName} | inTags must be of type string or array`);
 
-		if(typeof inTags === "string") inTags = inTags.split(" ");
-
-		if(Array.isArray(inTags)) inTags = inTags.join(" ");
+		if(typeof inTags === "string"){
+			inTags = inTags.split(" ");
+		}
 
 		inTags.forEach(t => {
 			if(typeof t !== "string") throw new Error(`GlobalTags | ${functionName} | tags in array must be of type string`);
-		})
+		});
 
 		return inTags;
+	}
+
+	_validateObjects(inObjects){
+		if(!Array.isArray(inObjects)) inObjects = [inObjects];
+		inObjects = inObjects.map(o => o?.document ?? o);
+		return inObjects;
 	}
 
 	_testTags(inTestTags, inTags, options){
