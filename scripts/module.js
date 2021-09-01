@@ -1,7 +1,7 @@
-const MODULE_NAME = "tagger";
-const FLAG_NAME = "tags";
-
 class Tagger {
+
+    static MODULE_NAME = "tagger"
+    static FLAG_NAME = "tags"
 
     /**
      * Gets all tags from a given PlaceableObject
@@ -12,7 +12,7 @@ class Tagger {
      */
     static getTags(inObject) {
         const relevantDocument = inObject?.document ?? inObject;
-        const tags = relevantDocument?.getFlag(MODULE_NAME, FLAG_NAME) ?? [];
+        const tags = relevantDocument?.getFlag(this.MODULE_NAME, this.FLAG_NAME) ?? [];
         return this._validateTags(tags);
     }
 
@@ -20,7 +20,7 @@ class Tagger {
      * Gets PlaceableObjects with matching tags provided to the method
      *
      * @param    {string|array}     inTags      An array of tags or a string of tags (separated by commas) that will be searched for
-     * @param    {PlaceableObject}  inOptions   An optional object that can contain any of the following:
+     * @param    {object}           inOptions   An optional object that can contain any of the following:
      *                                              - matchAll {boolean}        - whether the PlaceableObjects must contain all of the provided tags
      *                                              - caseInsensitive {boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
      *                                              - objects {array}           - an array of PlaceableObjects to test
@@ -171,14 +171,14 @@ class Tagger {
                         inTags.forEach(t => tags.delete(t));
                     }
                     if (tags.size === 0) {
-                        await obj.unsetFlag(MODULE_NAME, FLAG_NAME);
+                        await obj.unsetFlag(this.MODULE_NAME, this.FLAG_NAME);
                     } else {
-                        await obj.setFlag(MODULE_NAME, FLAG_NAME, Array.from(tags));
+                        await obj.setFlag(this.MODULE_NAME, this.FLAG_NAME, Array.from(tags));
                     }
                 }
             } else {
                 for (let obj of inObjects) {
-                    await obj.unsetFlag(MODULE_NAME, FLAG_NAME);
+                    await obj.unsetFlag(this.MODULE_NAME, this.FLAG_NAME);
                 }
             }
             resolve();
@@ -245,7 +245,7 @@ class TaggerConfig {
         <fieldset style="margin: 3px 0;">
 			<legend>Tags (separated by commas)</legend>
 			<div class="form-group">
-				<input name="flags.${MODULE_NAME}.${FLAG_NAME}" type="text" value="${tags.join(', ')}">
+				<input name="flags.${Tagger.MODULE_NAME}.${Tagger.FLAG_NAME}" type="text" value="${tags.join(', ')}">
 			</div>
 		</fieldset>
 		`;
