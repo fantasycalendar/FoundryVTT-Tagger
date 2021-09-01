@@ -58,7 +58,7 @@ Set the tags on an object
 `Tagger.setTags(object|array, string|array)`
 
 ```
-@param 	{object|array}	inObjects       An object or a list of objects to set tags on
+@param 	{object|array}	inObjects       An object or an array of objects to set tags on
 @param 	{string|array} 	inTags          An array of tags or a string of tags (separated by commas) that will 
                                         override all tags on the objects
 
@@ -72,7 +72,7 @@ Adds tags to an object
 `Tagger.addTags(object|array, string|array)`
 
 ```
-@param 	{object|array}	inObjects       An object or a list of objects to add tags to
+@param 	{object|array}	inObjects       An object or an array of objects to add tags to
 @param 	{string|array} 	inTags          An array of tags or a string of tags (separated by commas) that will
                                         be added to the objects
 
@@ -86,7 +86,7 @@ Removes tags from an object
 `Tagger.removeTags(object|array, string|array)`
 
 ```
-@param 	{object|array}	inObjects       An object or a list of objects to remove tags from
+@param 	{object|array}	inObjects       An object or an array of objects to remove tags from
 @param 	{string|array} 	inTags          An array of tags or a string of tags (separated by commas) that will
                                         be removed from the objects
 

@@ -19,11 +19,11 @@ const Tagger = {
      *
      * @param    {string|array}   inTags       An array of tags or a string of tags (separated by commas) that will be searched for
      * @param    {object}         options      An optional object that can contain any of the following:
-     *                                              - matchAll {boolean} - whether the object must contain all of the provided tags
+     *                                              - matchAll {boolean}  - whether the object must contain all of the provided tags
      *                                              - caseInsensitive     - whether the search is case insensitive (capitals vs lowercase is not considered)
      *                                              - objects {array}     - an array of objects to test
-     *                                              - ignore {array}     - an array of objects to ignore
-     *                                              - sceneId {string}     - a string ID for the scene to search in
+     *                                              - ignore {array}      - an array of objects to ignore
+     *                                              - sceneId {string}    - a string ID for the scene to search in
      * @returns  {Promise}                     A promise that will resolve when all objects have been found, returning an array of objects
      */
     getByTag(inTags, options = {}) {
@@ -94,7 +94,7 @@ const Tagger = {
     /**
      * Set the tags on an object
      *
-     * @param    {object|array}    inObjects    An object or a list of objects to set tags on
+     * @param    {object|array}    inObjects    An object or an array of objects to set tags on
      * @param    {string|array}    inTags       An array of tags or a string of tags (separated by commas) that will override all tags on the objects
      * @returns  {promise}                      A promise that will resolve when the objects' tags have been updated
      */
@@ -107,7 +107,7 @@ const Tagger = {
     /**
      * Adds tags to an object
      *
-     * @param    {object|array}    inObjects    An object or a list of objects to add tags to
+     * @param    {object|array}    inObjects    An object or an array of objects to add tags to
      * @param    {string|array}    inTags       An array of tags or a string of tags (separated by commas) that will be added to the objects
      * @returns  {promise}                      A promise that will resolve when the objects' tags have been updated
      */
@@ -120,7 +120,7 @@ const Tagger = {
     /**
      * Removes tags from an object
      *
-     * @param    {object|array}    inObjects    An object or a list of objects to remove tags from
+     * @param    {object|array}    inObjects    An object or an array of objects to remove tags from
      * @param    {string|array}    inTags       An array of tags or a string of tags (separated by commas) that will be removed from the objects
      * @returns  {promise}                      A promise that will resolve when the objects' tags have been updated
      */
@@ -145,7 +145,7 @@ const Tagger = {
      * Updates tags on the object
      *
      * @param    {object|array}    inObjects    The object to remove all tags from
-     * @param    {array|boolean}   inTags       The tags to update the object with, or false if clearing all tags
+     * @param    {array|boolean}   inTags       The tags to update the objects with, or false if clearing all tags
      * @param    {boolean}         isSetting    Whether to set and override any existing tags on the objects
      * @param    {boolean}         isAdding     Whether to add to the tags (if false, it removes from the tags)
      * @returns  {promise}                      A promise that will resolve when the object's tags have been updated
