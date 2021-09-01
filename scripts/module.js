@@ -11,8 +11,7 @@ const Tagger = {
 	getTags(inObject){
 		if(inObject?.document) inObject = inObject.document;
 		let tags = inObject?.getFlag(MODULE_NAME, FLAG_NAME) ?? [];
-		tags = Tagger._validateTags(tags);
-		return tags;
+		return Tagger._validateTags(tags);
 	},
 
 	/**
