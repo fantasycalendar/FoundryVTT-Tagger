@@ -48,7 +48,7 @@ Gets all tags from a given object
 ```
 @param	{object}        inObject        The object get tags from
 
-@returns {array}                        The tags on the objects in an array
+@returns {array}                        An array of tags from the object
 ```
 
 ### Set Tags

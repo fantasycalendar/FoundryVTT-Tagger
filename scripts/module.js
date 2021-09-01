@@ -6,7 +6,7 @@ const Tagger = {
      * Gets all tags from a given object
      *
      * @param    {object}          inObject    The object get tags from
-     * @returns  {array}                       The tags on the objects in an array
+     * @returns  {array}                       An array of tags from the object
      */
     getTags(inObject) {
         if (inObject?.document) inObject = inObject.document;
@@ -206,7 +206,7 @@ const Tagger = {
         if (!obj) return;
         let tags = Tagger.getTags(obj)
         let html = `<fieldset style="margin: 3px 0;">
-			<legend>Tags</legend>
+			<legend>Tags (separated by commas)</legend>
 			<div class="form-group">
 				<input name="flags.${MODULE_NAME}.${FLAG_NAME}" type="text" value="${tags.join(', ')}">
 			</div>
