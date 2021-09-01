@@ -6,7 +6,7 @@ const Tagger = {
      * Gets all tags from a given object
      *
      * @param    {object}          inObject    The object get tags from
-     * @returns {array}                        The tags on the objects in an array
+     * @returns  {array}                       The tags on the objects in an array
      */
     getTags(inObject) {
         if (inObject?.document) inObject = inObject.document;
@@ -24,7 +24,7 @@ const Tagger = {
      *                                              - objects {array}     - an array of objects to test
      *                                              - ignore {array}     - an array of objects to ignore
      *                                              - sceneId {string}     - a string ID for the scene to search in
-     * @returns {Promise}                      A promise that will resolve when all objects have been found, returning an array of objects
+     * @returns  {Promise}                     A promise that will resolve when all objects have been found, returning an array of objects
      */
     getByTag(inTags, options = {}) {
 
@@ -92,15 +92,28 @@ const Tagger = {
     },
 
     /**
+     * Set the tags on an object
+     *
+     * @param    {object|array}    inObjects    An object or a list of objects to set tags on
+     * @param    {string|array}    inTags       An array of tags or a string of tags (separated by commas) that will override all tags on the objects
+     * @returns  {promise}                      A promise that will resolve when the objects' tags have been updated
+     */
+    async setTags(inObjects, inTags = []) {
+        inTags = Tagger._validateTags(inTags, "setTags");
+        inObjects = Tagger._validateObjects(inObjects, "setTags");
+        return Tagger._updateTags(inObjects, inTags, { isSetting: true });
+    },
+
+    /**
      * Adds tags to an object
      *
      * @param    {object|array}    inObjects    An object or a list of objects to add tags to
-     * @param    {string|array}    inTags       An array of tags or a string of tags (separated by commas) that will be added to the object
-     * @returns {promise}                       A promise that will resolve when the object's tags have been updated
+     * @param    {string|array}    inTags       An array of tags or a string of tags (separated by commas) that will be added to the objects
+     * @returns  {promise}                      A promise that will resolve when the objects' tags have been updated
      */
     async addTags(inObjects, inTags) {
         inTags = Tagger._validateTags(inTags, "addTags");
-        inObjects = Tagger._validateObjects(inObjects);
+        inObjects = Tagger._validateObjects(inObjects, "addTags");
         return Tagger._updateTags(inObjects, inTags);
     },
 
@@ -108,23 +121,23 @@ const Tagger = {
      * Removes tags from an object
      *
      * @param    {object|array}    inObjects    An object or a list of objects to remove tags from
-     * @param    {string|array}    inTags       An array of tags or a string of tags (separated by commas) that will be removed from the object
-     * @returns {promise}                       A promise that will resolve when the object's tags have been updated
+     * @param    {string|array}    inTags       An array of tags or a string of tags (separated by commas) that will be removed from the objects
+     * @returns  {promise}                      A promise that will resolve when the objects' tags have been updated
      */
     async removeTags(inObjects, inTags) {
         inTags = Tagger._validateTags(inTags, "removeTags");
-        inObjects = Tagger._validateObjects(inObjects);
-        return Tagger._updateTags(inObjects, inTags, false);
+        inObjects = Tagger._validateObjects(inObjects, "removeTags");
+        return Tagger._updateTags(inObjects, inTags, { isAdding: false });
     },
 
     /**
      * Removes all tags from an object
      *
      * @param    {object|array}    inObjects    The object to remove all tags from
-     * @returns {promise}                       A promise that will resolve when the object's tags have been updated
+     * @returns  {promise}                      A promise that will resolve when the object's tags have been updated
      */
     async clearAllTags(inObjects) {
-        inObjects = Tagger._validateObjects(inObjects);
+        inObjects = Tagger._validateObjects(inObjects, "clearAllTags");
         return Tagger._updateTags(inObjects, false);
     },
 
@@ -133,27 +146,31 @@ const Tagger = {
      *
      * @param    {object|array}    inObjects    The object to remove all tags from
      * @param    {array|boolean}   inTags       The tags to update the object with, or false if clearing all tags
-     * @param    {boolean}         isAdding     The tags to update the object with, or false if clearing all tags
-     * @returns {promise}                       A promise that will resolve when the object's tags have been updated
+     * @param    {boolean}         isSetting    Whether to set and override any existing tags on the objects
+     * @param    {boolean}         isAdding     Whether to add to the tags (if false, it removes from the tags)
+     * @returns  {promise}                      A promise that will resolve when the object's tags have been updated
      */
-    _updateTags(inObjects, inTags, isAdding = true) {
+    _updateTags(inObjects, inTags, {isSetting = false, isAdding = true}={}) {
         return new Promise(async (resolve) => {
-            for (let obj of inObjects) {
-                if (inTags) {
+            if(inTags){
+                for(let obj of inObjects){
                     let tags = Tagger.getTags(obj);
                     if (tags) tags = new Set(tags);
-
-                    if (isAdding) {
+                    if(isSetting){
+                        tags = new Set([...inTags]);
+                    }else if(isAdding){
                         tags = new Set([...tags, ...inTags]);
-                    } else {
+                    }else{
                         inTags.forEach(t => tags.delete(t));
                     }
                     if (tags.size === 0) {
                         await obj.unsetFlag(MODULE_NAME, FLAG_NAME);
-                        continue;
+                    }else{
+                        await obj.setFlag(MODULE_NAME, FLAG_NAME, Array.from(tags));
                     }
-                    await obj.setFlag(MODULE_NAME, FLAG_NAME, Array.from(tags));
-                } else {
+                }
+            }else{
+                for(let obj of inObjects){
                     await obj.unsetFlag(MODULE_NAME, FLAG_NAME);
                 }
             }
@@ -175,8 +192,11 @@ const Tagger = {
         return inTags;
     },
 
-    _validateObjects(inObjects) {
+    _validateObjects(inObjects, functionName) {
         if (!Array.isArray(inObjects)) inObjects = [inObjects];
+        inObjects.forEach(o => {
+            if(!o) throw new Error(`Tagger | ${functionName} | Invalid object provided`);
+        })
         return inObjects.map(o => o?.document ?? o);
     },
 
@@ -223,13 +243,9 @@ const Tagger = {
     _fixUpTags(app) {
         let obj = app?.object._object;
         if (!obj) return;
-        [obj] = Tagger._validateObjects(obj);
+        [obj] = Tagger._validateObjects(obj, "_fixUpTags");
         let tags = Tagger.getTags(obj);
-        if (!tags.length) {
-            obj.unsetFlag(MODULE_NAME, FLAG_NAME);
-        } else {
-            obj.setFlag(MODULE_NAME, FLAG_NAME, tags);
-        }
+        Tagger._updateTags(obj, tags, { isSetting: true });
     }
 
 }

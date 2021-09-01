@@ -46,9 +46,23 @@ Gets all tags from a given object
 `Tagger.getTags(object)`
 
 ```
-@param	{object} 	inObject	The object get tags from
+@param	{object}        inObject        The object get tags from
 
-@returns {array} 			The tags on the objects in an array
+@returns {array}                        The tags on the objects in an array
+```
+
+### Set Tags
+
+Set the tags on an object
+
+`Tagger.setTags(object|array, string|array)`
+
+```
+@param 	{object|array}	inObjects       An object or a list of objects to set tags on
+@param 	{string|array} 	inTags          An array of tags or a string of tags (separated by commas) that will 
+                                        override all tags on the objects
+
+@returns {promise}                      A promise that will resolve when the objects' tags have been updated
 ```
 
 ### Add Tags
@@ -60,9 +74,9 @@ Adds tags to an object
 ```
 @param 	{object|array}	inObjects       An object or a list of objects to add tags to
 @param 	{string|array} 	inTags          An array of tags or a string of tags (separated by commas) that will
-                                        be added to the object
+                                        be added to the objects
 
-@returns {promise}                      A promise that will resolve when the object's tags have been updated
+@returns {promise}                      A promise that will resolve when the objects' tags have been updated
 ```
 
 ### Remove Tags
@@ -74,9 +88,9 @@ Removes tags from an object
 ```
 @param 	{object|array}	inObjects       An object or a list of objects to remove tags from
 @param 	{string|array} 	inTags          An array of tags or a string of tags (separated by commas) that will
-                                        be removed from the object
+                                        be removed from the objects
 
-@returns {promise}                      A promise that will resolve when the object's tags have been updated
+@returns {promise}                      A promise that will resolve when the objects' tags have been updated
 ```
 
 ### Clear All Tags
@@ -86,7 +100,7 @@ Removes all tags from an object
 `Tagger.clearAllTags(object|array)`
 
 ```
-@param 	{object|array}	inObjects	The object to remove all tags from
+@param 	{object|array}  inObjects       The objects to remove all tags from
 
-@returns {promise}			A promise that will resolve when the object's tags have been updated
+@returns {promise}                      A promise that will resolve when the objects' tags have been updated
 ```
