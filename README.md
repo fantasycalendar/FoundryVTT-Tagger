@@ -22,9 +22,15 @@ Gets PlaceableObjects with matching tags provided to the method.
 `Tagger.getByTag(string|array, options={})`
 
 ```
-@param    {PlaceableObject}  inObject    The PlaceableObject get tags from
+@param    {string|array}     inTags      An array of tags or a string of tags (separated by commas) that will be searched for
+@param    {PlaceableObject}  inOptions   An optional object that can contain any of the following:
+                                             - matchAll {boolean}        - whether the PlaceableObjects must contain all of the provided tags
+                                             - caseInsensitive {boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
+                                             - objects {array}           - an array of PlaceableObjects to test
+                                             - ignore {array}            - an array of PlaceableObjects to ignore
+                                             - sceneId {string}          - a string ID for the scene to search in
 
-@returns  {array}                        An array of tags from the PlaceableObject
+@returns  {Promise}                      A promise that will resolve when all PlaceableObjects have been found, returning an array of PlaceableObjects
 ```
 
 Examples:
@@ -39,15 +45,9 @@ Gets all tags from a given PlaceableObject
 `Tagger.getTags(PlaceableObject)`
 
 ```
-@param    {string|array}     inTags      An array of tags or a string of tags (separated by commas) that will be searched for
-@param    {PlaceableObject}  inOptions   An optional object that can contain any of the following:
-                                             - matchAll {boolean}        - whether the PlaceableObjects must contain all of the provided tags
-                                             - caseInsensitive {boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
-                                             - objects {array}           - an array of PlaceableObjects to test
-                                             - ignore {array}            - an array of PlaceableObjects to ignore
-                                             - sceneId {string}          - a string ID for the scene to search in
+@param    {PlaceableObject}  inObject    The PlaceableObject get tags from
 
-@returns  {Promise}                      A promise that will resolve when all PlaceableObjects have been found, returning an array of PlaceableObjects
+@returns  {array}                        An array of tags from the PlaceableObject
 ```
 
 ### Set Tags
