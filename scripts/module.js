@@ -13,7 +13,7 @@ class Tagger {
     static getTags(inObject) {
         const relevantDocument = inObject?.document ?? inObject;
         const tags = relevantDocument?.getFlag(this.MODULE_NAME, this.FLAG_NAME) ?? [];
-        return this._validateTags(tags);
+        return this._validateTags(tags, "getTags");
     }
 
     /**
@@ -208,7 +208,7 @@ class Tagger {
 
 class TaggerConfig {
 
-    static _handleRenderFormApplication(app, html, options){
+    static _handleRenderFormApplication(app, html){
         const found = configHandlers.find(config => app instanceof config.classType);
         if (!found) return;
         TaggerConfig[found.method](app, html, true);
@@ -238,7 +238,7 @@ class TaggerConfig {
         if (!elem) return;
 
         const tags = app?.object instanceof Actor
-            ? Tagger._validateTags(getProperty(app?.object, "data.token.flags.tagger.tags"))
+            ? Tagger._validateTags(getProperty(app?.object, "data.token.flags.tagger.tags") ?? [], "_applyHtml")
             : Tagger.getTags(app?.object?._object);
 
         const html = `
@@ -262,7 +262,7 @@ class TaggerConfig {
         let propertyName = "flags.tagger.tags";
         if(document instanceof Actor) propertyName = "token." + propertyName;
         const tags = getProperty(updateData, propertyName);
-        if(tags) setProperty(updateData, propertyName, Tagger._validateTags(tags));
+        if(tags) setProperty(updateData, propertyName, Tagger._validateTags(tags, "_applyTags"));
     }
 
 }
