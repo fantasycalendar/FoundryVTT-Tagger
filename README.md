@@ -24,7 +24,8 @@ Gets PlaceableObjects with matching tags provided to the method.
 ```
 @param    {string|array}     inTags      An array of tags or a string of tags (separated by commas) that will be searched for
 @param    {object}           inOptions   An optional object that can contain any of the following:
-                                             - matchAny {boolean}        - whether the PlaceableObjects can contain any of the provided tags to be matched
+                                             - matchAny {boolean}        - whether the PlaceableObjects can contain any of the provided tags
+                                             - matchExactly {boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided
                                              - caseInsensitive {boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
                                              - objects {array}           - an array of PlaceableObjects to test
                                              - ignore {array}            - an array of PlaceableObjects to ignore

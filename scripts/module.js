@@ -21,7 +21,8 @@ class Tagger {
      *
      * @param    {string|array}     inTags      An array of tags or a string of tags (separated by commas) that will be searched for
      * @param    {object}           inOptions   An optional object that can contain any of the following:
-     *                                              - matchAny {boolean}        - whether the PlaceableObjects can contain any of the provided tags to be matched
+     *                                              - matchAny {boolean}        - whether the PlaceableObjects can contain any of the provided tags
+     *                                              - matchExactly {boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided
      *                                              - caseInsensitive {boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
      *                                              - objects {array}           - an array of PlaceableObjects to test
      *                                              - ignore {array}            - an array of PlaceableObjects to ignore
@@ -37,16 +38,19 @@ class Tagger {
                 objects: [],
                 ignore: [],
                 matchAny: false,
+                matchExactly: false,
                 caseInsensitive: false,
                 sceneId: game.canvas.id
             }, inOptions)
 
             const providedTags = this._validateTags(inTags, "getByTag")
                 .map(t => options.caseInsensitive ? t.toLowerCase() : t)
-                .map(t => new RegExp(t.replace(/[^A-Za-z0-9 .*_-]/g, "").replace(".", "\.").replace("*", "(.*?)")))
+                .map(t => new RegExp(t.replace(".", "\.").replace("*", "(.*?)")))
 
             if (typeof options.matchAny !== "boolean") throw new Error("Tagger | getByTag | options.matchAny must be of type boolean");
             if (typeof options.caseInsensitive !== "boolean") throw new Error("Tagger | getByTag | options.caseInsensitive must be of type boolean");
+            if (typeof options.matchExactly !== "boolean") throw new Error("Tagger | getByTag | options.matchExactly must be of type boolean");
+            if (options.matchAny && options.matchExactly) throw new Error("Tagger | getByTag | options.matchAny and options.matchExactly cannot both be true, they are opposites");
             if (!Array.isArray(options.objects)) throw new Error("Tagger | getByTag | options.objects must be of type array");
             if (!Array.isArray(options.ignore)) throw new Error("Tagger | getByTag | options.ignore must be of type array");
             if (typeof options.sceneId !== "string") throw new Error("Tagger | getByTag | options.sceneId must be of type string");
@@ -60,8 +64,7 @@ class Tagger {
             options.objects = options.objects.filter(obj => !options.ignore.includes(obj));
 
             resolve(options.objects.filter(obj => {
-                const objectTags = this.getTags(obj);
-                return objectTags && this._testTags(providedTags, objectTags, options);
+                return this._testObject(obj, providedTags, options);
             }).map(obj => obj?._object ?? obj));
 
         });
@@ -79,9 +82,13 @@ class Tagger {
         ].deepFlatten().filter(Boolean)
     }
 
-    static _testTags(inTestTags, inTags, options) {
+    static _testObject(inObject, inTestTags, options) {
 
-        const objectTags = inTags.map(tag => options.caseInsensitive ? tag.toLowerCase() : tag)
+        let objectTags = this.getTags(inObject);
+
+        if(!objectTags) return false;
+
+        objectTags = objectTags.map(tag => options.caseInsensitive ? tag.toLowerCase() : tag)
 
         const matchedTags = inTestTags.filter(testTag => {
             return objectTags.filter(tag => {
@@ -93,7 +100,11 @@ class Tagger {
             return matchedTags.length;
         }
 
-        return matchedTags.length === inTestTags.length;
+        if(options.matchExactly){
+            return matchedTags.length === inTestTags.length && objectTags.length === inTestTags.length;
+        }
+
+        return matchedTags.length >= inTestTags.length;
 
     }
 
@@ -191,7 +202,7 @@ class Tagger {
     static _validateTags(inTags, functionName) {
         if (!(typeof inTags === "string" || Array.isArray(inTags))) throw new Error(`Tagger | ${functionName} | inTags must be of type string or array`);
 
-        let providedTags = typeof inTags === "string" ? inTags.split(",") : inTags;
+        const providedTags = typeof inTags === "string" ? inTags.split(",") : inTags;
 
         providedTags.forEach(t => {
             if (typeof t !== "string") throw new Error(`Tagger | ${functionName} | tags in array must be of type string`);
