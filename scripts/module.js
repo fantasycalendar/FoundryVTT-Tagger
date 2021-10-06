@@ -21,7 +21,7 @@ class Tagger {
      *
      * @param    {string|array}     inTags      An array of tags or a string of tags (separated by commas) that will be searched for
      * @param    {object}           inOptions   An optional object that can contain any of the following:
-     *                                              - matchAll {boolean}        - whether the PlaceableObjects must contain all of the provided tags
+     *                                              - matchAny {boolean}        - whether the PlaceableObjects can contain any of the provided tags to be matched
      *                                              - caseInsensitive {boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
      *                                              - objects {array}           - an array of PlaceableObjects to test
      *                                              - ignore {array}            - an array of PlaceableObjects to ignore
@@ -36,7 +36,7 @@ class Tagger {
             let options = foundry.utils.mergeObject({
                 objects: [],
                 ignore: [],
-                matchAll: false,
+                matchAny: false,
                 caseInsensitive: false,
                 sceneId: game.canvas.id
             }, inOptions)
@@ -45,6 +45,8 @@ class Tagger {
                 .map(t => options.caseInsensitive ? t.toLowerCase() : t)
                 .map(t => new RegExp(t.replace(/[^A-Za-z0-9 .*_-]/g, "").replace(".", "\.").replace("*", "(.*?)")))
 
+            if (typeof options.matchAny === "boolean") throw new Error("Tagger | getByTag | options.matchAny must be of type boolean");
+	        if (typeof options.caseInsensitive === "boolean") throw new Error("Tagger | getByTag | options.caseInsensitive must be of type boolean");
             if (!Array.isArray(options.objects)) throw new Error("Tagger | getByTag | options.objects must be of type array");
             if (!Array.isArray(options.ignore)) throw new Error("Tagger | getByTag | options.ignore must be of type array");
             if (typeof options.sceneId !== "string") throw new Error("Tagger | getByTag | options.sceneId must be of type string");
@@ -87,11 +89,12 @@ class Tagger {
             }).length;
         })
 
-        if (options.matchAll) {
-            return matches.length === objectTags.length;
+        if (options.matchAny) {
+            return matches.length;
         }
 
-        return matches.length;
+        return matches.length === objectTags.length;
+        
     }
 
     /**
