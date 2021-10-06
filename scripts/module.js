@@ -46,7 +46,7 @@ class Tagger {
                 .map(t => new RegExp(t.replace(/[^A-Za-z0-9 .*_-]/g, "").replace(".", "\.").replace("*", "(.*?)")))
 
             if (typeof options.matchAny !== "boolean") throw new Error("Tagger | getByTag | options.matchAny must be of type boolean");
-	    if (typeof options.caseInsensitive !== "boolean") throw new Error("Tagger | getByTag | options.caseInsensitive must be of type boolean");
+            if (typeof options.caseInsensitive !== "boolean") throw new Error("Tagger | getByTag | options.caseInsensitive must be of type boolean");
             if (!Array.isArray(options.objects)) throw new Error("Tagger | getByTag | options.objects must be of type array");
             if (!Array.isArray(options.ignore)) throw new Error("Tagger | getByTag | options.ignore must be of type array");
             if (typeof options.sceneId !== "string") throw new Error("Tagger | getByTag | options.sceneId must be of type string");
@@ -83,18 +83,18 @@ class Tagger {
 
         const objectTags = inTags.map(tag => options.caseInsensitive ? tag.toLowerCase() : tag)
 
-        const matches = inTestTags.filter(testTag => {
+        const matchedTags = inTestTags.filter(testTag => {
             return objectTags.filter(tag => {
                 return testTag.test(tag);
             }).length;
         })
 
         if (options.matchAny) {
-            return matches.length;
+            return matchedTags.length;
         }
 
-        return matches.length === objectTags.length;
-        
+        return matchedTags.length === inTestTags.length;
+
     }
 
     /**
@@ -211,7 +211,7 @@ class Tagger {
 
 class TaggerConfig {
 
-    static _handleRenderFormApplication(app, html){
+    static _handleRenderFormApplication(app, html) {
         const found = configHandlers.find(config => app instanceof config.classType);
         if (!found) return;
         TaggerConfig[found.method](app, html, true);
@@ -263,9 +263,9 @@ class TaggerConfig {
 
     static _applyTags(document, updateData) {
         let propertyName = "flags.tagger.tags";
-        if(document instanceof Actor) propertyName = "token." + propertyName;
+        if (document instanceof Actor) propertyName = "token." + propertyName;
         const tags = getProperty(updateData, propertyName);
-        if(tags) setProperty(updateData, propertyName, Tagger._validateTags(tags, "_applyTags"));
+        if (tags) setProperty(updateData, propertyName, Tagger._validateTags(tags, "_applyTags"));
     }
 
 }
