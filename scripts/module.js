@@ -46,7 +46,7 @@ class Tagger {
                 .map(t => new RegExp(t.replace(/[^A-Za-z0-9 .*_-]/g, "").replace(".", "\.").replace("*", "(.*?)")))
 
             if (typeof options.matchAny === "boolean") throw new Error("Tagger | getByTag | options.matchAny must be of type boolean");
-	        if (typeof options.caseInsensitive === "boolean") throw new Error("Tagger | getByTag | options.caseInsensitive must be of type boolean");
+	    if (typeof options.caseInsensitive === "boolean") throw new Error("Tagger | getByTag | options.caseInsensitive must be of type boolean");
             if (!Array.isArray(options.objects)) throw new Error("Tagger | getByTag | options.objects must be of type array");
             if (!Array.isArray(options.ignore)) throw new Error("Tagger | getByTag | options.ignore must be of type array");
             if (typeof options.sceneId !== "string") throw new Error("Tagger | getByTag | options.sceneId must be of type string");
