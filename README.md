@@ -38,7 +38,7 @@ Examples:
 
 - `Tagger.getByTag("tags")`
 - `Tagger.getByTag("tags, TO, LOOK, foR", { caseInsensitive: true })`
-- `Tagger.getByTag(["tags", "to", "look", "for"], { matchAll: true, sceneId: "8xjy4UUVoRcEYUNy" })`
+- `Tagger.getByTag(["tags", "to", "look", "for"], { matchAny: true, sceneId: "8xjy4UUVoRcEYUNy" })`
 
 ### Get Tags
 Gets all tags from a given PlaceableObject
