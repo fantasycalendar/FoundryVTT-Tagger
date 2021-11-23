@@ -70,7 +70,7 @@ Checks if a PlaceableObject has the given tags
 
 ### Set Tags
 
-Set the tags on an PlaceableObject
+Set the tags on a PlaceableObject
 
 `Tagger.setTags(PlaceableObject|Array, String|Array)`
 
@@ -84,7 +84,7 @@ Set the tags on an PlaceableObject
 
 ### Add Tags
 
-Add tags to an PlaceableObject
+Add tags to a PlaceableObject
 
 `Tagger.addTags(PlaceableObject|Array, String|Array)`
 
@@ -97,7 +97,7 @@ Add tags to an PlaceableObject
 
 ### Remove Tags
 
-Remove tags from an PlaceableObject
+Remove tags from a PlaceableObject
 
 `Tagger.removeTags(PlaceableObject|Array, String|Array)`
 
@@ -110,7 +110,7 @@ Remove tags from an PlaceableObject
 
 ### Clear All Tags
 
-Removes all tags from an PlaceableObject
+Removes all tags from a PlaceableObject
 
 `Tagger.clearAllTags(PlaceableObject|Array)`
 
