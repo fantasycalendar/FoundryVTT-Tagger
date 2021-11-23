@@ -19,19 +19,19 @@ Each tag is separated by a comma.
 ### Get By Tag
 Gets PlaceableObjects with matching tags provided to the method.
 
-`Tagger.getByTag(string|array, options={})`
+`Tagger.getByTag(String|Array, options={})`
 
 ```
-@param    {string|array}     inTags      An array of tags or a string of tags (separated by commas) that will be searched for
-@param    {object}           inOptions   An optional object that can contain any of the following:
-                                             - matchAny {boolean}        - whether the PlaceableObjects can contain any of the provided tags
-                                             - matchExactly {boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided
-                                             - caseInsensitive {boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
-                                             - objects {array}           - an array of PlaceableObjects to test
-                                             - ignore {array}            - an array of PlaceableObjects to ignore
-                                             - sceneId {string}          - a string ID for the scene to search in
+@param    {String|Array}     inTags         An array of tags or a string of tags (separated by commas) that will be searched for
+@param    {Object}           inOptions      An optional object that can contain any of the following:
+                                             - matchAny {Boolean}        - whether the PlaceableObjects can contain any of the provided tags
+                                             - matchExactly {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided
+                                             - caseInsensitive {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
+                                             - objects {Array}           - an array of PlaceableObjects to test
+                                             - ignore {Array}            - an array of PlaceableObjects to ignore
+                                             - sceneId {String}          - a string ID for the scene to search in
 
-@returns  {Promise}                      A promise that will resolve when all PlaceableObjects have been found, returning an array of PlaceableObjects
+@returns  {Array}                           Returns an array of filtered PlaceableObjects based on the tags
 ```
 
 Examples:
@@ -46,59 +46,76 @@ Gets all tags from a given PlaceableObject
 `Tagger.getTags(PlaceableObject)`
 
 ```
-@param    {PlaceableObject}  inObject    The PlaceableObject get tags from
+@param    {PlaceableObject}  inObject       The PlaceableObject get tags from
 
-@returns  {array}                        An array of tags from the PlaceableObject
+@returns  {Array}                           An array of tags from the PlaceableObject
+```
+
+
+### Has Tags
+Checks if a PlaceableObject has the given tags
+
+`Tagger.hasTags(PlaceableObject, String|Array, Object)`
+
+```
+@param    {PlaceableObject}  inObject       The PlaceableObject to check
+@param    {String|Array}     inTags         An array of tags or a string of tags (separated by commas) that will be searched for
+@param    {Object}           inOptions      An optional object that can contain any of the following:
+                                             - matchAny {Boolean}        - whether the PlaceableObjects can contain any of the provided tags
+                                             - matchExactly {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided
+                                             - caseInsensitive {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
+
+@returns  {Boolean}                         Returns a boolean whether the object has the given tags
 ```
 
 ### Set Tags
 
 Set the tags on an PlaceableObject
 
-`Tagger.setTags(PlaceableObject|array, string|array)`
+`Tagger.setTags(PlaceableObject|Array, String|Array)`
 
 ```
-@param    {PlaceableObject|array}    inObjects   A PlaceableObject or an array of PlaceableObjects to set tags on
-@param    {string|array}             inTags      An array of tags or a string of tags (separated by commas) that will override all tags on the PlaceableObjects
+@param    {PlaceableObject|Array}    inObjects   A PlaceableObject or an array of PlaceableObjects to set tags on
+@param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will override all tags on the PlaceableObjects
 
-@returns  {promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
+@returns  {Promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
 
 ```
 
 ### Add Tags
 
-Adds tags to an PlaceableObject
+Add tags to an PlaceableObject
 
-`Tagger.addTags(PlaceableObject|array, string|array)`
+`Tagger.addTags(PlaceableObject|Array, String|Array)`
 
 ```
-@param    {PlaceableObject|array}    inObjects   A PlaceableObject or an array of PlaceableObjects to add tags to
-@param    {string|array}             inTags      An array of tags or a string of tags (separated by commas) that will be added to the PlaceableObjects
+@param    {PlaceableObject|Array}    inObjects   A PlaceableObject or an array of PlaceableObjects to add tags to
+@param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will be added to the PlaceableObjects
 
-@returns  {promise}                              A promise that will resolve when the tags have been updated
+@returns  {Promise}                              A promise that will resolve when the tags have been updated
 ```
 
 ### Remove Tags
 
-Removes tags from an PlaceableObject
+Remove tags from an PlaceableObject
 
-`Tagger.removeTags(PlaceableObject|array, string|array)`
+`Tagger.removeTags(PlaceableObject|Array, String|Array)`
 
 ```
-@param    {PlaceableObject|array}    inObjects   A PlaceableObject or an array of PlaceableObjects to remove tags from
-@param    {string|array}             inTags      An array of tags or a string of tags (separated by commas) that will be removed from the PlaceableObjects
+@param    {PlaceableObject|Array}    inObjects   A PlaceableObject or an array of PlaceableObjects to remove tags from
+@param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will be removed from the PlaceableObjects
 
-@returns  {promise}                              A promise that will resolve when the tags have been updated
+@returns  {Promise}                              A promise that will resolve when the tags have been updated
 ```
 
 ### Clear All Tags
 
 Removes all tags from an PlaceableObject
 
-`Tagger.clearAllTags(PlaceableObject|array)`
+`Tagger.clearAllTags(PlaceableObject|Array)`
 
 ```
-@param    {PlaceableObject|array}    inObjects   The PlaceableObjects to remove all tags from
+@param    {PlaceableObject|Array}    inObjects   The PlaceableObjects to remove all tags from
 
-@returns  {promise}                              A promise that will resolve when the tags have been updated
+@returns  {Promise}                              A promise that will resolve when the tags have been updated
 ```
