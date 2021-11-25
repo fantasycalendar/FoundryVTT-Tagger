@@ -59,7 +59,7 @@ class Tagger {
      * @param    {PlaceableObject|Array}    inObjects   A PlaceableObject, or an array of PlaceableObjects to set tags on
      * @param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will override all tags on the PlaceableObjects
      *
-     * @returns  {Promise}                              A promise that will resolve when the Documents' tags have been updated
+     * @returns  {Promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
      */
     static async setTags(inObjects, inTags = []) {
         const relevantObjects = this._validateObjects(inObjects, "setTags");
@@ -73,7 +73,7 @@ class Tagger {
      * @param    {PlaceableObject|Array}    inObjects   A PlaceableObject, or an array of PlaceableObjects to add tags to
      * @param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will be added to the PlaceableObjects
      *
-     * @returns  {Promise}                              A promise that will resolve when the Documents' tags have been updated
+     * @returns  {Promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
      */
     static async addTags(inObjects, inTags) {
         const relevantObjects = this._validateObjects(inObjects, "addTags");
@@ -87,7 +87,7 @@ class Tagger {
      * @param    {PlaceableObject|Array}    inObjects   A PlaceableObject, or an array of PlaceableObjects to remove tags from
      * @param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will be removed from the PlaceableObjects
      *
-     * @returns  {Promise}                              A promise that will resolve when the Documents' tags have been updated
+     * @returns  {Promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
      */
     static async removeTags(inObjects, inTags) {
         const relevantObjects = this._validateObjects(inObjects, "removeTags");
@@ -100,7 +100,7 @@ class Tagger {
      *
      * @param    {PlaceableObject|Array}    inObjects   The PlaceableObjects to remove all tags from
      *
-     * @returns  {Promise}                              A promise that will resolve when the Documents' tags have been updated
+     * @returns  {Promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
      */
     static async clearAllTags(inObjects) {
         const relevantObjects = this._validateObjects(inObjects, "clearAllTags");

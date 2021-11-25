@@ -68,7 +68,7 @@ Checks if a PlaceableObject has the given tags
                                              - matchExactly {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided
                                              - caseInsensitive {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
 
-@returns  {Boolean}                         Returns a boolean whether the object has the given tags
+@returns  {Boolean}                         Returns a boolean whether the PlaceableObject's Document has the given tags
 ```
 
 ### Set Tags
@@ -95,7 +95,7 @@ Add tags to a PlaceableObject
 @param    {PlaceableObject|Array}    inObjects   A PlaceableObject or an array of PlaceableObjects to add tags to
 @param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will be added to the PlaceableObjects
 
-@returns  {Promise}                              A promise that will resolve when the tags have been updated
+@returns  {Promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
 ```
 
 ### Remove Tags
@@ -108,7 +108,7 @@ Remove tags from a PlaceableObject
 @param    {PlaceableObject|Array}    inObjects   A PlaceableObject or an array of PlaceableObjects to remove tags from
 @param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will be removed from the PlaceableObjects
 
-@returns  {Promise}                              A promise that will resolve when the tags have been updated
+@returns  {Promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
 ```
 
 ### Clear All Tags
@@ -120,5 +120,5 @@ Removes all tags from a PlaceableObject
 ```
 @param    {PlaceableObject|Array}    inObjects   The PlaceableObjects to remove all tags from
 
-@returns  {Promise}                              A promise that will resolve when the tags have been updated
+@returns  {Promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
 ```
