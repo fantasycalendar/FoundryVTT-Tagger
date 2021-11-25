@@ -4,19 +4,6 @@ class Tagger {
     static FLAG_NAME = "tags"
 
     /**
-     * Gets all tags from a given PlaceableObject
-     *
-     * @param    {PlaceableObject}  inObject    The PlaceableObject get tags from
-     *
-     * @returns  {Array}                        An array of tags from the PlaceableObject
-     */
-    static getTags(inObject) {
-        const relevantDocument = inObject?.document ?? inObject;
-        const tags = relevantDocument?.getFlag(this.MODULE_NAME, this.FLAG_NAME) ?? [];
-        return this._validateTags(tags, "getTags");
-    }
-
-    /**
      * Gets PlaceableObjects with matching tags provided to the method
      *
      * @param    {String|Array}     inTags      An array of tags or a string of tags (separated by commas) that will be searched for
@@ -24,20 +11,23 @@ class Tagger {
      *                                              - matchAny {Boolean}        - whether the PlaceableObjects can contain any of the provided tags
      *                                              - matchExactly {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided
      *                                              - caseInsensitive {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
+     *                                              - allScenes {Boolean}       - whether to search in all scenes, this will return an object with the key
+     *                                                                            as the scene ID, and an array for objects found within that scene
+     *                                              - returnObjects {Boolean}   - whether to return the object rather than the Document
      *                                              - objects {Array}           - an array of PlaceableObjects to test
      *                                              - ignore {Array}            - an array of PlaceableObjects to ignore
      *                                              - sceneId {String}          - a string ID for the scene to search in
      *
-     * @returns  {Array}                        Returns an array of filtered PlaceableObjects based on the tags
+     * @returns  {Array}                        Returns an array of filtered Documents based on the tags
      */
     static getByTag(inTags, inOptions = {}) {
         return Tagger._getObjectsByTags(inTags, inOptions, "getByTag");
     }
 
     /**
-     * Verifies whether a given PlaceableObject has the tags given
+     * Verifies whether a given PlaceableObject or Document has the tags given
      *
-     * @param    {PlaceableObject}    inObject    A PlaceableObject or an array of PlaceableObjects to set tags on
+     * @param    {PlaceableObject}    inObject    A PlaceableObject, or an array of PlaceableObjects to check for tags on
      * @param    {String|Array}       inTags      An array of tags or a string of tags (separated by commas) that will be searched for
      * @param    {Object}             inOptions   An optional object that can contain any of the following:
      *                                              - matchAny {Boolean}        - whether the PlaceableObjects can contain any of the provided tags
@@ -51,12 +41,25 @@ class Tagger {
     }
 
     /**
-     * Set the tags on an PlaceableObject
+     * Gets all tags from a given PlaceableObject or Document
      *
-     * @param    {PlaceableObject|Array}    inObjects   A PlaceableObject or an array of PlaceableObjects to set tags on
+     * @param    {PlaceableObject}  inObject    The PlaceableObject or Document get tags from
+     *
+     * @returns  {Array}                        An array of tags from the Document
+     */
+    static getTags(inObject) {
+        const relevantDocument = inObject?.document ?? inObject;
+        const tags = relevantDocument?.getFlag(this.MODULE_NAME, this.FLAG_NAME) ?? [];
+        return this._validateTags(tags, "getTags");
+    }
+
+    /**
+     * Set the tags on an PlaceableObject or Document
+     *
+     * @param    {PlaceableObject|Array}    inObjects   A PlaceableObject, or an array of PlaceableObjects to set tags on
      * @param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will override all tags on the PlaceableObjects
      *
-     * @returns  {Promise}                              A promise that will resolve when the PlaceableObjects' tags have been updated
+     * @returns  {Promise}                              A promise that will resolve when the Documents' tags have been updated
      */
     static async setTags(inObjects, inTags = []) {
         const relevantObjects = this._validateObjects(inObjects, "setTags");
@@ -67,10 +70,10 @@ class Tagger {
     /**
      * Adds tags to an object
      *
-     * @param    {PlaceableObject|Array}    inObjects   A PlaceableObject or an array of PlaceableObjects to add tags to
+     * @param    {PlaceableObject|Array}    inObjects   A PlaceableObject, or an array of PlaceableObjects to add tags to
      * @param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will be added to the PlaceableObjects
      *
-     * @returns  {Promise}                              A promise that will resolve when the tags have been updated
+     * @returns  {Promise}                              A promise that will resolve when the Documents' tags have been updated
      */
     static async addTags(inObjects, inTags) {
         const relevantObjects = this._validateObjects(inObjects, "addTags");
@@ -81,10 +84,10 @@ class Tagger {
     /**
      * Removes tags from an object
      *
-     * @param    {PlaceableObject|Array}    inObjects   A PlaceableObject or an array of PlaceableObjects to remove tags from
+     * @param    {PlaceableObject|Array}    inObjects   A PlaceableObject, or an array of PlaceableObjects to remove tags from
      * @param    {String|Array}             inTags      An array of tags or a string of tags (separated by commas) that will be removed from the PlaceableObjects
      *
-     * @returns  {Promise}                              A promise that will resolve when the tags have been updated
+     * @returns  {Promise}                              A promise that will resolve when the Documents' tags have been updated
      */
     static async removeTags(inObjects, inTags) {
         const relevantObjects = this._validateObjects(inObjects, "removeTags");
@@ -97,7 +100,7 @@ class Tagger {
      *
      * @param    {PlaceableObject|Array}    inObjects   The PlaceableObjects to remove all tags from
      *
-     * @returns  {Promise}                              A promise that will resolve when the tags have been updated
+     * @returns  {Promise}                              A promise that will resolve when the Documents' tags have been updated
      */
     static async clearAllTags(inObjects) {
         const relevantObjects = this._validateObjects(inObjects, "clearAllTags");
@@ -147,6 +150,8 @@ class Tagger {
             objects: false,
             ignore: false,
             matchAny: false,
+            allScenes: false,
+            returnObjects: false,
             matchExactly: false,
             caseInsensitive: false,
             sceneId: game.canvas.id
@@ -157,6 +162,8 @@ class Tagger {
         if (typeof options.matchAny !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.matchAny must be of type boolean`);
         if (typeof options.caseInsensitive !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.caseInsensitive must be of type boolean`);
         if (typeof options.matchExactly !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.matchExactly must be of type boolean`);
+        if (typeof options.allScenes !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.allScenes must be of type boolean`);
+        if (typeof options.returnObjects !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.returnObjects must be of type boolean`);
         if (options.matchAny && options.matchExactly) throw new Error(`Tagger | ${inFunctionName} | options.matchAny and options.matchExactly cannot both be true, they are opposites`);
         if (options.objects && !Array.isArray(options.objects)) throw new Error(`Tagger | ${inFunctionName} | options.objects must be of type array`);
         if (options.ignore && !Array.isArray(options.ignore)) throw new Error(`Tagger | ${inFunctionName} | options.ignore must be of type array`);
@@ -170,16 +177,28 @@ class Tagger {
             .map(t => new RegExp(t.replace(".", "\.").replace("*", "(.*?)")))
 
         if (!options.objects) {
-            options.objects = this._getObjectsFromScene(scene)
+            if(options.allScenes) {
+                return this._getObjectsFromAllScenes(providedTags, options);
+            }else{
+                options.objects = this._getObjectsFromScene(scene);
+            }
         }
 
-        if(options.ignore) {
-            options.objects = options.objects.filter(obj => !options.ignore.includes(obj));
-        }
+        return this._testObjects(providedTags, options);
 
-        return options.objects.filter(obj => {
-            return this._testObject(obj, providedTags, options);
-        }).map(obj => obj?._object ?? obj);
+    }
+
+    static _getObjectsFromAllScenes(inTestTags, options){
+
+        return Object.fromEntries(Array.from(game.scenes).map(scene => {
+
+            const sceneOptions = foundry.utils.mergeObject(options, {
+                objects: this._getObjectsFromScene(scene)
+            });
+
+            return [[scene.id], this._testObjects(inTestTags, sceneOptions)];
+
+        }).filter(entry => entry[1].length));
 
     }
 
@@ -193,6 +212,18 @@ class Tagger {
             ...Array.from(scene.walls),
             ...Array.from(scene.drawings),
         ].deepFlatten().filter(Boolean)
+    }
+
+    static _testObjects(inTestTags, options){
+
+        if(options.ignore) {
+            options.objects = options.objects.filter(obj => !options.ignore.includes(obj));
+        }
+
+        return options.objects.filter(obj => {
+            return this._testObject(obj, inTestTags, options);
+        }).map(obj => options.returnObjects ? (obj._object ?? obj) : obj);
+
     }
 
     static _testObject(inObject, inTestTags, options) {

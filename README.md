@@ -22,16 +22,19 @@ Gets PlaceableObjects with matching tags provided to the method.
 `Tagger.getByTag(String|Array, options={})`
 
 ```
-@param    {String|Array}     inTags         An array of tags or a string of tags (separated by commas) that will be searched for
-@param    {Object}           inOptions      An optional object that can contain any of the following:
+@param    {String|Array}     inTags      An array of tags or a string of tags (separated by commas) that will be searched for
+@param    {Object}           inOptions   An optional object that can contain any of the following:
                                              - matchAny {Boolean}        - whether the PlaceableObjects can contain any of the provided tags
                                              - matchExactly {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided
                                              - caseInsensitive {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
+                                             - allScenes {Boolean}       - whether to search in all scenes, this will return an object with the key
+                                                                           as the scene ID, and an array for objects found within that scene
+                                             - returnObjects {Boolean}   - whether to return the object rather than the Document
                                              - objects {Array}           - an array of PlaceableObjects to test
                                              - ignore {Array}            - an array of PlaceableObjects to ignore
                                              - sceneId {String}          - a string ID for the scene to search in
 
-@returns  {Array}                           Returns an array of filtered PlaceableObjects based on the tags
+@returns  {Array}                        Returns an array of filtered Documents based on the tags
 ```
 
 Examples:
