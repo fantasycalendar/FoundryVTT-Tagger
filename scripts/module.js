@@ -13,7 +13,6 @@ class Tagger {
      *                                              - caseInsensitive {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
      *                                              - allScenes {Boolean}       - whether to search in all scenes, this will return an object with the key
      *                                                                            as the scene ID, and an array for objects found within that scene
-     *                                              - returnObjects {Boolean}   - whether to return the object rather than the Document
      *                                              - objects {Array}           - an array of PlaceableObjects to test
      *                                              - ignore {Array}            - an array of PlaceableObjects to ignore
      *                                              - sceneId {String}          - a string ID for the scene to search in
@@ -151,7 +150,6 @@ class Tagger {
             ignore: false,
             matchAny: false,
             allScenes: false,
-            returnObjects: false,
             matchExactly: false,
             caseInsensitive: false,
             sceneId: game.canvas.id
@@ -163,7 +161,6 @@ class Tagger {
         if (typeof options.caseInsensitive !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.caseInsensitive must be of type boolean`);
         if (typeof options.matchExactly !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.matchExactly must be of type boolean`);
         if (typeof options.allScenes !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.allScenes must be of type boolean`);
-        if (typeof options.returnObjects !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.returnObjects must be of type boolean`);
         if (options.matchAny && options.matchExactly) throw new Error(`Tagger | ${inFunctionName} | options.matchAny and options.matchExactly cannot both be true, they are opposites`);
         if (options.objects && !Array.isArray(options.objects)) throw new Error(`Tagger | ${inFunctionName} | options.objects must be of type array`);
         if (options.ignore && !Array.isArray(options.ignore)) throw new Error(`Tagger | ${inFunctionName} | options.ignore must be of type array`);

@@ -28,8 +28,7 @@ Gets PlaceableObjects with matching tags provided to the method.
                                              - matchExactly {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided
                                              - caseInsensitive {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)
                                              - allScenes {Boolean}       - whether to search in all scenes, this will return an object with the key
-                                                                           as the scene ID, and an array for objects found within that scene
-                                             - returnObjects {Boolean}   - whether to return the object rather than the Document
+                                                                           as the scene itself, and an array for objects found within that scene
                                              - objects {Array}           - an array of PlaceableObjects to test
                                              - ignore {Array}            - an array of PlaceableObjects to ignore
                                              - sceneId {String}          - a string ID for the scene to search in
