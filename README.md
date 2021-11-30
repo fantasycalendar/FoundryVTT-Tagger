@@ -17,7 +17,7 @@ Each tag is separated by a comma.
 ## Documentation
 
 ### Get By Tag
-Gets PlaceableObjects with matching tags provided to the method.
+Get Documents with matching tags provided to the method.
 
 `Tagger.getByTag(String|Array, Object)`
 
@@ -43,7 +43,7 @@ Examples:
 - `Tagger.getByTag(["tags", "to", "look", "for"], { matchAny: true, sceneId: "8xjy4UUVoRcEYUNy" })`
 
 ### Get Tags
-Gets all tags from a given PlaceableObject
+Get all tags from a given Document
 
 `Tagger.getTags(PlaceableObject|Documents)`
 
@@ -72,7 +72,7 @@ Checks if a PlaceableObject or Document has the given tags
 
 ### Set Tags
 
-Set the tags on a PlaceableObject
+Set the tags on a PlaceableObject or Document
 
 `Tagger.setTags(PlaceableObject|Document|Array, String|Array)`
 
@@ -85,7 +85,7 @@ Set the tags on a PlaceableObject
 
 ### Add Tags
 
-Add tags to a PlaceableObject
+Add tags to a PlaceableObject or Document
 
 `Tagger.addTags(PlaceableObject|Document|Array, String|Array)`
 
@@ -98,7 +98,7 @@ Add tags to a PlaceableObject
 
 ### Remove Tags
 
-Remove tags from a PlaceableObject
+Remove tags from a PlaceableObject or Document
 
 `Tagger.removeTags(PlaceableObject|Document|Array, String|Array)`
 
@@ -111,7 +111,7 @@ Remove tags from a PlaceableObject
 
 ### Clear All Tags
 
-Removes all tags from a PlaceableObject
+Removes all tags from a PlaceableObject or Document
 
 `Tagger.clearAllTags(PlaceableObject|Document|Array)`
 
