@@ -35,7 +35,7 @@ class Tagger {
      *
      * @returns  {Boolean}                        Returns a boolean whether the object has the given tags
      */
-    static async hasTags(inObject, inTags, inOptions={}){
+    static hasTags(inObject, inTags, inOptions={}){
         return Tagger._getObjectsByTags(inTags, foundry.utils.mergeObject(inOptions, { objects: [inObject] }), "hasTags").length > 0;
     }
 
@@ -106,16 +106,6 @@ class Tagger {
         return this._updateTags(relevantObjects, false);
     }
 
-    /**
-     * Updates tags on the PlaceableObject
-     *
-     * @param    {PlaceableObject|Array}    inObjects   The PlaceableObjects to remove all tags from
-     * @param    {array|boolean}            inTags      The tags to update the PlaceableObjects with, false clears tags
-     * @param    {Boolean}                  isSetting   Whether to override any existing tags on the PlaceableObjects
-     * @param    {Boolean}                  isAdding    Whether to add to the tags (if false, it removes from the tags)
-     *
-     * @returns  {Promise}                              A promise that will resolve when the tags have been updated
-     */
     static _updateTags(inObjects, inTags, { isSetting = false, isAdding = true } = {}) {
         return new Promise(async (resolve) => {
             if (inTags) {
