@@ -263,9 +263,9 @@ class Tagger {
 class TaggerConfig {
 
     static _handleRenderFormApplication(app, html) {
-        const found = configHandlers.find(config => app instanceof config.classType);
-        if (!found) return;
-        TaggerConfig[found.method](app, html, true);
+        const method = configHandlers[app.constructor.name];
+        if (!method) return;
+        TaggerConfig[method](app, html, true);
     }
 
     static _handleTokenConfig(app, html) {
@@ -281,6 +281,11 @@ class TaggerConfig {
     static _handleDrawingConfig(app, html) {
         const elem = html.find(`div[data-tab="position"]`);
         this._applyHtml(app, elem);
+    }
+
+    static _handleAmbientLightConfig(app, html) {
+        let elem = html.find(`button[name="submit"]`).parent();
+        this._applyHtml(app, elem, true);
     }
 
     static _handleGenericConfig(app, html) {
@@ -321,16 +326,17 @@ class TaggerConfig {
 
 }
 
-const configHandlers = [
-    { classType: TokenConfig, method: "_handleTokenConfig" },
-    { classType: TileConfig, method: "_handleTileConfig" },
-    { classType: DrawingConfig, method: "_handleDrawingConfig" },
-    { classType: WallConfig, method: "_handleGenericConfig" },
-    { classType: LightConfig, method: "_handleGenericConfig" },
-    { classType: AmbientSoundConfig, method: "_handleGenericConfig" },
-    { classType: MeasuredTemplateConfig, method: "_handleGenericConfig" },
-    { classType: NoteConfig, method: "_handleGenericConfig" }
-]
+const configHandlers = {
+    "TokenConfig": "_handleTokenConfig",
+    "TileConfig": "_handleTileConfig",
+    "DrawingConfig": "_handleDrawingConfig",
+    "AmbientLightConfig": "_handleAmbientLightConfig", // v9
+    "LightConfig": "_handleGenericConfig", // v8
+    "WallConfig": "_handleGenericConfig",
+    "AmbientSoundConfig": "_handleGenericConfig",
+    "MeasuredTemplateConfig": "_handleGenericConfig",
+    "NoteConfig": "_handleGenericConfig"
+}
 
 Hooks.on("renderFormApplication", TaggerConfig._handleRenderFormApplication);
 

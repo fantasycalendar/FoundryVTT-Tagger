@@ -2,16 +2,20 @@
   "name": "tagger",
   "title": "Tagger",
   "description": "A global tags manager for easy manipulation of objects of similar types",
-  "version": "This is auto replaced",
-  "library": "false",
-  "manifestPlusVersion": "1.0.0",
-  "minimumCoreVersion": "0.8.8",
-  "compatibleCoreVersion": "9.000",
   "author": "Wasp (Wasp#2005)",
+  "url": "https://github.com/Haxxer/FoundryVTT-Tagger",
+  "flags": {},
+  "version": "This is auto replaced",
+  "minimumCoreVersion": "0.8.9",
+  "compatibleCoreVersion": "9.000",
+  "scripts": [],
   "esmodules": [
     "/scripts/module.js"
   ],
-  "url": "This is auto replaced",
-  "manifest": "This is auto replaced",
-  "download": "This is auto replaced"
+  "socket": false,
+  "manifest": "https://github.com/Haxxer/FoundryVTT-Tagger/releases/latest/download/module.json",
+  "download": "https://github.com/Haxxer/FoundryVTT-Tagger/releases/download/1.2.1/module.zip",
+  "protected": false,
+  "coreTranslation": false,
+  "library": "false"
 }
