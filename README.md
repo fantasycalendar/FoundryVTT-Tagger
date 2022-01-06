@@ -8,7 +8,7 @@ This module allows you to tag PlaceableObjects and retrieve them just as easy.
 
 ## Download
 
-`https://github.com/Haxxer/FoundryVTT-Tagger/releases/latest/download/module.json`
+`https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/latest/download/module.json`
 
 ## Dialogs
 
