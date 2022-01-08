@@ -275,6 +275,7 @@ class TaggerConfig {
 
     static _handleTileConfig(app, html) {
         const elem = html.find(`div[data-tab="basic"]`);
+        console.log(elem)
         this._applyHtml(app, elem);
     }
 
@@ -329,6 +330,7 @@ class TaggerConfig {
 const configHandlers = {
     "TokenConfig": "_handleTokenConfig",
     "TileConfig": "_handleTileConfig",
+    "ActiveTileConfig": "_handleTileConfig", // Monk's Active Tiles
     "DrawingConfig": "_handleDrawingConfig",
     "AmbientLightConfig": "_handleAmbientLightConfig", // v9
     "LightConfig": "_handleGenericConfig", // v8
