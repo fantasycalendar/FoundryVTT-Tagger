@@ -275,7 +275,6 @@ class TaggerConfig {
 
     static _handleTileConfig(app, html) {
         const elem = html.find(`div[data-tab="basic"]`);
-        console.log(elem)
         this._applyHtml(app, elem);
     }
 
