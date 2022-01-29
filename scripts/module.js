@@ -475,8 +475,7 @@ class TaggerHandler {
         setProperty(documentData, taggerFlagProperty, tags);
 
         if(game.modules.get("token-attacher")?.active){
-            const prototypeFlagProperty = "flags.token-attacher.prototypeAttached";
-            documentData = this.recurseTokenAttacher(documentData, prototypeFlagProperty);
+            documentData = this.recurseTokenAttacher(documentData);
         }
 
         inDocument.data.update(documentData);
@@ -498,10 +497,7 @@ class TaggerHandler {
                     if(objectTags) {
                         setProperty(documentData, `flags.token-attacher.prototypeAttached.${type}.${i}.${taggerFlagProperty}`, this.applyRules(objectTags));
                     }
-                    const objectsAttached = getProperty(object, "flags.token-attacher.prototypeAttached");
-                    if(objectsAttached) {
-                        object = this.recurseTokenAttacher(object)
-                    }
+                    object = this.recurseTokenAttacher(object)
                 }
             }
         }
