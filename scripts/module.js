@@ -444,7 +444,7 @@ const configHandlers = {
 
 Hooks.on("renderFormApplication", TaggerConfig._handleRenderFormApplication);
 
-let temporaryIds = [];
+let temporaryIds = {};
 
 class TaggerHandler {
 
@@ -461,26 +461,36 @@ class TaggerHandler {
 
         if(hotkeyState.altDown) return;
 
-        temporaryIds = [];
+        temporaryIds = {};
 
         let documentData = inDocument.data.toObject()
 
         const taggerFlagProperty = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.TAGS}`;
         tags = getProperty(inDocument.data, taggerFlagProperty);
 
-        if(!tags) return;
-
-        tags = this.applyRules(tags);
-
-        setProperty(documentData, taggerFlagProperty, tags);
+        if(tags) {
+            tags = this.applyRules(tags);
+            setProperty(documentData, taggerFlagProperty, tags);
+        }
 
         if(game.modules.get("token-attacher")?.active){
             documentData = this.recurseTokenAttacher(documentData);
         }
 
+        if(game.modules.get("monks-active-tiles")?.active){
+            const monkActions = documentData?.flags?.["monks-active-tiles"]?.actions ?? [];
+            monkActions.forEach((action, i) => {
+                let id = action?.data?.entity?.id;
+                if(!id || !id.startsWith("tagger:")) return;
+                const tag = id.replace("tagger:", "");
+                const [newTag] = this.applyRules([tag]);
+                setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.entity.id`, `tagger:${newTag}`);
+            })
+        }
+
         inDocument.data.update(documentData);
 
-        temporaryIds = [];
+        temporaryIds = {};
 
     }
 
@@ -558,10 +568,13 @@ class TaggerHandler {
          *  @private
          */
         "{id}": (tag, regx, index) => {
-            let id = temporaryIds?.[index];
+            let id = temporaryIds?.[tag]?.[index];
             if(!id){
+                if(!temporaryIds?.[tag]){
+                    temporaryIds[tag] = []
+                }
                 id = randomID();
-                temporaryIds.push(id);
+                temporaryIds[tag].push(id);
             }
             return tag.replace(regx, id);
         }
