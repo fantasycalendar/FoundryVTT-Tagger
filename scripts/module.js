@@ -475,7 +475,8 @@ class TaggerHandler {
         setProperty(documentData, taggerFlagProperty, tags);
 
         if(game.modules.get("token-attacher")?.active){
-            documentData = this.handleTokenAttacher(documentData);
+            const prototypeFlagProperty = "flags.token-attacher.prototypeAttached";
+            documentData = this.recurseTokenAttacher(documentData, prototypeFlagProperty);
         }
 
         inDocument.data.update(documentData);
@@ -484,19 +485,23 @@ class TaggerHandler {
 
     }
 
-    static handleTokenAttacher(documentData){
+    static recurseTokenAttacher(documentData){
 
         const taggerFlagProperty = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.TAGS}`;
-        const prototypeFlagProperty = "flags.token-attacher.prototypeAttached";
-        const prototypeAttached = getProperty(inDocument.data, prototypeFlagProperty);
+        const prototypeAttached = getProperty(documentData, "flags.token-attacher.prototypeAttached");
 
         if(prototypeAttached){
             for(const [type, objects] of Object.entries(prototypeAttached)){
                 for(let i = 0; i < objects.length; i++){
-                    const object = objects[i];
+                    let object = objects[i];
                     let objectTags = getProperty(object, taggerFlagProperty);
-                    if(!objectTags) continue;
-                    setProperty(documentData, `${prototypeFlagProperty}.${type}.${i}.${taggerFlagProperty}`,  this.applyRules(objectTags))
+                    if(objectTags) {
+                        setProperty(documentData, `flags.token-attacher.prototypeAttached.${type}.${i}.${taggerFlagProperty}`, this.applyRules(objectTags));
+                    }
+                    const objectsAttached = getProperty(object, "flags.token-attacher.prototypeAttached");
+                    if(objectsAttached) {
+                        object = this.recurseTokenAttacher(object)
+                    }
                 }
             }
         }

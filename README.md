@@ -28,6 +28,10 @@ This module allows you to put unique tags on objects in scenes and use Tagger's 
 
 `https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/latest/download/module.json`
 
+Or if you want to try **experimental** features:
+
+`https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/latest/download/module.json`
+
 ## Dialogs
 
 All major PlaceableObjects' configuration dialogues (such as actor prototype tokens, tokens, tiles, walls, lights, etc), now has a "Tags" field.
