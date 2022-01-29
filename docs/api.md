@@ -1,41 +1,3 @@
-# Tagger
-
-![Latest Release Download Count](https://img.shields.io/github/downloads/fantasycalendar/FoundryVTT-Tagger/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge) [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Ftagger&colorB=006400&style=for-the-badge)](https://forge-vtt.com/bazaar#package=tagger) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fgithub.com%2Ffantasycalendar%2FFoundryVTT-Tagger%2Freleases%2Flatest%2Fdownload%2Fmodule.json&label=Foundry%20Version&query=$.compatibleCoreVersion&colorB=orange&style=for-the-badge) ![Latest Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fgithub.com%2Ffantasycalendar%2FFoundryVTT-Tagger%2Freleases%2Flatest%2Fdownload%2Fmodule.json&label=Latest%20Release&prefix=v&query=$.version&colorB=red&style=for-the-badge)
-
----
-
-<img src="https://app.fantasy-calendar.com/resources/computerworks-logo-full.png" alt="Fantasy Computerworks Logo" style="width:250px;"/>
-
-A module made by Fantasy Computerworks.
-
-Other works by us:
-- [Fantasy Calendar](https://app.fantasy-calendar.com) - The best calendar creator and management app on the internet
-- [Sequencer](https://foundryvtt.com/packages/sequencer) - Wow your players by playing visual effects on the canvas
-- [Item Piles](https://foundryvtt.com/packages/item-piles) - Drag & drop items into the scene to drop item piles that you can then easily pick up
-- [Token Ease](https://foundryvtt.com/packages/token-ease) - Make your tokens _feel good_ to move around on the board
-
-Like what we've done? Buy us a coffee!
-
-<a href='https://ko-fi.com/H2H2LCCQ' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
----
-
-## What is Tagger?
-
-This module allows you to put unique tags on objects in scenes and use Tagger's powerful API to quickly retrieve them.
-
-## Download
-
-`https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/latest/download/module.json`
-
-## Dialogs
-
-All major PlaceableObjects' configuration dialogues (such as actor prototype tokens, tokens, tiles, walls, lights, etc), now has a "Tags" field.
-
-Each tag is separated by a comma.
-
-![img.png](docs/token-config.png)
-
 # Documentation
 ## Functions
 
@@ -260,7 +222,7 @@ Applies all tag rules to every tag found on the given PlaceableObjects
 
 ## Tag Rules
 
-| Tag Rule | Description |
-| -------- | ----------- |
-| `{#}` | The `{#}` gets replaced with an unique number, and the number depends on how many other objects in the scene also has that tag |
-| `{id}` | The `{id}` gets replaced with an unique ID |
+| Tag Rule | Description | Example |
+| -------- | ------ | ----------- |
+| `{#}` | The `{#}` gets replaced with an unique number, and the number depends on how many other objects in the scene also has that tag | `test_{#}_tag` becomes `test_1_tag` |
+| `{id}` | The `{id}` gets replaced with an unique ID | `test_{id}_tag` becomes `test_3vpqbezsece9zdwi_tag` |
