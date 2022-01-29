@@ -5,7 +5,7 @@
     "author": "Wasp (Wasp#2005)",
     "url": "https://github.com/fantasycalendar/FoundryVTT-Tagger",
     "flags": {},
-    "version": "1.2.4",
+    "version": "1.2.5",
     "minimumCoreVersion": "0.8.9",
     "compatibleCoreVersion": "9.000",
     "scripts": [],
@@ -14,7 +14,7 @@
     ],
     "socket": false,
     "manifest": "https://raw.githubusercontent.com/fantasycalendar/FoundryVTT-Tagger/next/module.json",
-    "download": "https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/download/1.2.4/module.zip",
+    "download": "https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/download/1.2.5/module.zip",
     "protected": false,
     "coreTranslation": false,
     "library": "false"
