@@ -30,7 +30,7 @@ This module allows you to put unique tags on objects in scenes and use Tagger's 
 
 Or if you want to try **experimental** features:
 
-`https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/latest/download/module.json`
+`https://raw.githubusercontent.com/fantasycalendar/FoundryVTT-Tagger/next/module.json`
 
 ## Dialogs
 
