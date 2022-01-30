@@ -24,6 +24,11 @@ Like what we've done? Buy us a coffee!
 
 This module allows you to put unique tags on objects in scenes and use Tagger's powerful API to quickly retrieve them.
 
+## Supported Modules
+
+- [Token Attacher](https://foundryvtt.com/packages/token-attacher/) - If you have tag rules (like `{#}`) on attached objects, they will get applied when the prefab is first created, even on nested attached objects
+- [Monks Active Tile Triggers](https://foundryvtt.com/packages/monks-active-tiles) - This module also integrates Tagger to be able to select objects in the scene in its actions, and similarly to above, tag rules are evaluated when an active tile is created, either manually or through Token Attacher!
+
 ## Download
 
 `https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/latest/download/module.json`

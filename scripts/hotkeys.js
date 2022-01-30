@@ -1,9 +1,7 @@
 import CONSTANTS from "./constants.js";
 
 export const hotkeyState = {
-    ctrlDown: false,
-    altDown: false,
-    shiftDown: false
+    dropNoRules: false,
 }
 
 function isVersion9() {
@@ -15,17 +13,17 @@ export function registerHotkeysPre() {
     if (isVersion9()) {
 
         game.keybindings.register(CONSTANTS.MODULE_NAME, "do-not-apply-tag-rules", {
-            name: "Force drop one item",
-            uneditable: [
-                { key: "AltLeft" },
+            name: "Don't apply tag rules on drop",
+            editable: [
+                { key: "ControlLeft" },
             ],
             onDown: () => {
-                hotkeyState.altDown = true;
+                hotkeyState.dropNoRules = true;
             },
             onUp: () => {
-                hotkeyState.altDown = false;
+                hotkeyState.dropNoRules = false;
             },
-            reservedModifiers: ["SHIFT", "CONTROL"]
+            precedence: CONST.KEYBINDING_PRECEDENCE.PRIORITY
         });
 
     }
@@ -38,16 +36,16 @@ export function registerHotkeysPost() {
 
         window.addEventListener("keydown", (event) => {
             switch(event.code){
-                case "AltLeft":
-                    hotkeyState.altDown = true;
+                case "ControlLeft":
+                    hotkeyState.dropNoRules = true;
                     break;
             }
         });
 
         window.addEventListener("keyup", (event) => {
             switch(event.code){
-                case "AltLeft":
-                    hotkeyState.altDown = false;
+                case "ControlLeft":
+                    hotkeyState.dropNoRules = false;
                     break;
             }
         });

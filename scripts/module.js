@@ -458,7 +458,8 @@ class TaggerHandler {
     }
 
     static preCreateApplyTags(inDocument){
-        if(hotkeyState.altDown) return;
+        console.log(hotkeyState)
+        if(hotkeyState.dropNoRules) return;
         let documentData = inDocument.data.toObject()
         temporaryIds = {};
         this.applyCreateTags(documentData);
