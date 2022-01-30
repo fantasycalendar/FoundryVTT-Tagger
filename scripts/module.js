@@ -403,14 +403,14 @@ class TaggerConfig {
         if (!elem) return;
 
         const tags = app?.object instanceof Actor
-            ? Tagger._validateTags(getProperty(app?.object, `data.token.flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.TAGS}`) ?? [], "_applyHtml")
+            ? Tagger._validateTags(getProperty(app?.object, `data.token.${CONSTANTS.TAG_PROPERTY}`) ?? [], "_applyHtml")
             : Tagger.getTags(app?.object?._object);
 
         const html = $(`
         <fieldset style="margin: 3px 0;">
 			<legend>Tags (separated by commas)</legend>
 			<div class="form-group">
-				<input name="flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.TAGS}" type="text" value="${tags.join(', ')}">
+				<input name="${CONSTANTS.TAG_PROPERTY}" type="text" value="${tags.join(', ')}">
 				<button type="button" style="flex: 0; height: 28px; width: 28px; line-height: 0; font-size: 0.75rem; margin-left: 10px;"><i class="fas fa-check"></i></button>
 			</div>
 		</fieldset>`);
@@ -449,7 +449,7 @@ let temporaryIds = {};
 class TaggerHandler {
 
     static applyUpdateTags(inDocument, updateData) {
-        let propertyName = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.TAGS}`;
+        let propertyName = CONSTANTS.TAG_PROPERTY;
         if (inDocument instanceof Actor) propertyName = "token." + propertyName;
         let tags = getProperty(updateData, propertyName);
         if (!tags || tags?.length === 0) return;
@@ -457,24 +457,32 @@ class TaggerHandler {
         setProperty(updateData, propertyName, tags);
     }
 
-    static applyCreateTags(inDocument, tags) {
-
+    static preCreateApplyTags(inDocument){
         if(hotkeyState.altDown) return;
-
-        temporaryIds = {};
-
         let documentData = inDocument.data.toObject()
+        temporaryIds = {};
+        this.applyCreateTags(documentData);
+        temporaryIds = {};
+        return inDocument.data.update(documentData);
+    }
 
-        const taggerFlagProperty = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.TAGS}`;
-        tags = getProperty(inDocument.data, taggerFlagProperty);
+    static applyCreateTags(documentData) {
 
-        if(tags) {
-            tags = this.applyRules(tags);
-            setProperty(documentData, taggerFlagProperty, tags);
+        const preprocessed = getProperty(documentData, `${CONSTANTS.DATA_PROPERTY}.preprocessed`);
+        if(preprocessed){
+            setProperty(documentData, `${CONSTANTS.DATA_PROPERTY}.preprocessed`, false);
+            return;
         }
 
-        if(game.modules.get("token-attacher")?.active){
-            documentData = this.recurseTokenAttacher(documentData);
+        let tags = getProperty(documentData, CONSTANTS.TAG_PROPERTY);
+
+        if (tags) {
+            tags = this.applyRules(tags);
+            setProperty(documentData, CONSTANTS.TAG_PROPERTY, tags);
+        }
+
+        if (game.modules.get("token-attacher")?.active) {
+            this.recurseTokenAttacher(documentData);
         }
 
         if(game.modules.get("monks-active-tiles")?.active){
@@ -488,31 +496,18 @@ class TaggerHandler {
             })
         }
 
-        inDocument.data.update(documentData);
-
-        temporaryIds = {};
-
     }
 
     static recurseTokenAttacher(documentData){
-
-        const taggerFlagProperty = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.TAGS}`;
         const prototypeAttached = getProperty(documentData, "flags.token-attacher.prototypeAttached");
-
-        if(prototypeAttached){
-            for(const [type, objects] of Object.entries(prototypeAttached)){
-                for(let i = 0; i < objects.length; i++){
-                    let object = objects[i];
-                    let objectTags = getProperty(object, taggerFlagProperty);
-                    if(objectTags) {
-                        setProperty(documentData, `flags.token-attacher.prototypeAttached.${type}.${i}.${taggerFlagProperty}`, this.applyRules(objectTags));
-                    }
-                    object = this.recurseTokenAttacher(object)
+        if(prototypeAttached) {
+            for(const objects of Object.values(prototypeAttached)){
+                for(const object of objects){
+                    this.applyCreateTags(object)
+                    setProperty(object, `${CONSTANTS.DATA_PROPERTY}.preprocessed`, true);
                 }
             }
         }
-
-        return documentData;
     }
 
     static applyRules(tags){
@@ -521,6 +516,8 @@ class TaggerHandler {
             entry[0] = new RegExp(`${entry[0]}`, "g");
             return entry;
         });
+
+        tags = Tagger._validateTags(tags, "TaggerHandler");
 
         return tags.map((tag, index) => {
 
@@ -586,19 +583,21 @@ Hooks.on("preUpdateToken", (doc, update) => TaggerHandler.applyUpdateTags(doc, u
 Hooks.on("preUpdateTile", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
 Hooks.on("preUpdateDrawing", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
 Hooks.on("preUpdateWall", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
-Hooks.on("preUpdateLight", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
+Hooks.on("preUpdateLight", (doc, update) => TaggerHandler.applyUpdateTags(doc, update)); // 0.8.9
+Hooks.on("preUpdateAmbientLight", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
 Hooks.on("preUpdateAmbientSound", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
 Hooks.on("preUpdateMeasuredTemplate", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
 Hooks.on("preUpdateNote", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
 
-Hooks.on("preCreateToken", (doc) => TaggerHandler.applyCreateTags(doc));
-Hooks.on("preCreateTile", (doc) => TaggerHandler.applyCreateTags(doc));
-Hooks.on("preCreateDrawing", (doc) => TaggerHandler.applyCreateTags(doc));
-Hooks.on("preCreateWall", (doc) => TaggerHandler.applyCreateTags(doc));
-Hooks.on("preCreateLight", (doc) => TaggerHandler.applyCreateTags(doc));
-Hooks.on("preCreateAmbientSound", (doc) => TaggerHandler.applyCreateTags(doc));
-Hooks.on("preCreateMeasuredTemplate", (doc) => TaggerHandler.applyCreateTags(doc));
-Hooks.on("preCreateNote", (doc) => TaggerHandler.applyCreateTags(doc));
+Hooks.on("preCreateToken", (doc) => TaggerHandler.preCreateApplyTags(doc));
+Hooks.on("preCreateTile", (doc) => TaggerHandler.preCreateApplyTags(doc));
+Hooks.on("preCreateDrawing", (doc) => TaggerHandler.preCreateApplyTags(doc));
+Hooks.on("preCreateWall", (doc) => TaggerHandler.preCreateApplyTags(doc));
+Hooks.on("preCreateLight", (doc) => TaggerHandler.preCreateApplyTags(doc)); // 0.8.9
+Hooks.on("preCreateAmbientLight", (doc) => TaggerHandler.preCreateApplyTags(doc));
+Hooks.on("preCreateAmbientSound", (doc) => TaggerHandler.preCreateApplyTags(doc));
+Hooks.on("preCreateMeasuredTemplate", (doc) => TaggerHandler.preCreateApplyTags(doc));
+Hooks.on("preCreateNote", (doc) => TaggerHandler.preCreateApplyTags(doc));
 
 Hooks.once('init', async function () {
     registerHotkeysPre();
