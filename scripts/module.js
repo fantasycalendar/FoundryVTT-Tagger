@@ -457,10 +457,8 @@ class TaggerHandler {
         setProperty(updateData, propertyName, tags);
     }
 
-    static preCreateApplyTags(inDocument){
-        console.log(hotkeyState)
+    static preCreateApplyTags(inDocument, documentData){
         if(hotkeyState.dropNoRules) return;
-        let documentData = inDocument.data.toObject()
         temporaryIds = {};
         this.applyCreateTags(documentData);
         temporaryIds = {};
@@ -489,11 +487,34 @@ class TaggerHandler {
         if(game.modules.get("monks-active-tiles")?.active){
             const monkActions = documentData?.flags?.["monks-active-tiles"]?.actions ?? [];
             monkActions.forEach((action, i) => {
-                let id = action?.data?.entity?.id;
-                if(!id || !id.startsWith("tagger:")) return;
-                const tag = id.replace("tagger:", "");
-                const [newTag] = this.applyRules([tag]);
-                setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.entity.id`, `tagger:${newTag}`);
+
+                let locationName = action?.data?.location?.name;
+                if(locationName && locationName.startsWith("[Tagger] ")) {
+                    const tag = locationName.replace("[Tagger] ", "");
+                    const [newTag] = this.applyRules([tag]);
+                    setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.location.id`, `[Tagger] ${newTag}`);
+                }
+
+                let locationId = action?.data?.location?.id;
+                if(locationId && locationId.startsWith("tagger:")) {
+                    const tag = locationId.replace("tagger:", "");
+                    const [newTag] = this.applyRules([tag]);
+                    setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.location.id`, `tagger:${newTag}`);
+                }
+
+                let entityName = action?.data?.entity?.name;
+                if(entityName && entityName.startsWith("[Tagger] ")) {
+                    const tag = entityName.replace("[Tagger] ", "");
+                    const [newTag] = this.applyRules([tag]);
+                    setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.entity.name`, `[Tagger] ${newTag}`);
+                }
+
+                let entityId = action?.data?.entity?.id;
+                if(entityId && entityId.startsWith("tagger:")) {
+                    const tag = entityId.replace("tagger:", "");
+                    const [newTag] = this.applyRules([tag]);
+                    setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.entity.id`, `tagger:${newTag}`);
+                }
             })
         }
 
@@ -579,26 +600,26 @@ class TaggerHandler {
     }
 }
 
-Hooks.on("preUpdateActor", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
-Hooks.on("preUpdateToken", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
-Hooks.on("preUpdateTile", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
-Hooks.on("preUpdateDrawing", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
-Hooks.on("preUpdateWall", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
-Hooks.on("preUpdateLight", (doc, update) => TaggerHandler.applyUpdateTags(doc, update)); // 0.8.9
-Hooks.on("preUpdateAmbientLight", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
-Hooks.on("preUpdateAmbientSound", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
-Hooks.on("preUpdateMeasuredTemplate", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
-Hooks.on("preUpdateNote", (doc, update) => TaggerHandler.applyUpdateTags(doc, update));
+Hooks.on("preUpdateActor", (...args) => TaggerHandler.applyUpdateTags(...args));
+Hooks.on("preUpdateToken", (...args) => TaggerHandler.applyUpdateTags(...args));
+Hooks.on("preUpdateTile", (...args) => TaggerHandler.applyUpdateTags(...args));
+Hooks.on("preUpdateDrawing", (...args) => TaggerHandler.applyUpdateTags(...args));
+Hooks.on("preUpdateWall", (...args) => TaggerHandler.applyUpdateTags(...args));
+Hooks.on("preUpdateLight", (...args) => TaggerHandler.applyUpdateTags(...args)); // 0.8.9
+Hooks.on("preUpdateAmbientLight", (...args) => TaggerHandler.applyUpdateTags(...args));
+Hooks.on("preUpdateAmbientSound", (...args) => TaggerHandler.applyUpdateTags(...args));
+Hooks.on("preUpdateMeasuredTemplate", (...args) => TaggerHandler.applyUpdateTags(...args));
+Hooks.on("preUpdateNote", (...args) => TaggerHandler.applyUpdateTags(...args));
 
-Hooks.on("preCreateToken", (doc) => TaggerHandler.preCreateApplyTags(doc));
-Hooks.on("preCreateTile", (doc) => TaggerHandler.preCreateApplyTags(doc));
-Hooks.on("preCreateDrawing", (doc) => TaggerHandler.preCreateApplyTags(doc));
-Hooks.on("preCreateWall", (doc) => TaggerHandler.preCreateApplyTags(doc));
-Hooks.on("preCreateLight", (doc) => TaggerHandler.preCreateApplyTags(doc)); // 0.8.9
-Hooks.on("preCreateAmbientLight", (doc) => TaggerHandler.preCreateApplyTags(doc));
-Hooks.on("preCreateAmbientSound", (doc) => TaggerHandler.preCreateApplyTags(doc));
-Hooks.on("preCreateMeasuredTemplate", (doc) => TaggerHandler.preCreateApplyTags(doc));
-Hooks.on("preCreateNote", (doc) => TaggerHandler.preCreateApplyTags(doc));
+Hooks.on("preCreateToken", (...args) => TaggerHandler.preCreateApplyTags(...args));
+Hooks.on("preCreateTile", (...args) => TaggerHandler.preCreateApplyTags(...args));
+Hooks.on("preCreateDrawing", (...args) => TaggerHandler.preCreateApplyTags(...args));
+Hooks.on("preCreateWall", (...args) => TaggerHandler.preCreateApplyTags(...args));
+Hooks.on("preCreateLight", (...args) => TaggerHandler.preCreateApplyTags(...args)); // 0.8.9
+Hooks.on("preCreateAmbientLight", (...args) => TaggerHandler.preCreateApplyTags(...args));
+Hooks.on("preCreateAmbientSound", (...args) => TaggerHandler.preCreateApplyTags(...args));
+Hooks.on("preCreateMeasuredTemplate", (...args) => TaggerHandler.preCreateApplyTags(...args));
+Hooks.on("preCreateNote", (...args) => TaggerHandler.preCreateApplyTags(...args));
 
 Hooks.once('init', async function () {
     registerHotkeysPre();
