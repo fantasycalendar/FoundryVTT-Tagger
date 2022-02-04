@@ -492,7 +492,7 @@ class TaggerHandler {
                 if(locationName && locationName.startsWith("[Tagger] ")) {
                     const tag = locationName.replace("[Tagger] ", "");
                     const [newTag] = this.applyRules([tag]);
-                    setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.location.id`, `[Tagger] ${newTag}`);
+                    setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.location.name`, `[Tagger] ${newTag}`);
                 }
 
                 let locationId = action?.data?.location?.id;
