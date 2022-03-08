@@ -369,8 +369,12 @@ export default class Tagger {
 class TaggerConfig {
 
     static _handleRenderFormApplication(app, html) {
-        const method = configHandlers[app.constructor.name];
-        if (!method) return;
+        let method = configHandlers[app.constructor.name];
+        if (!method){
+            const key = Object.keys(configHandlers).find(name => app.constructor.name.includes(name));
+            if(!key) return;
+            method = configHandlers[key];
+        }
         TaggerConfig[method](app, html, true);
     }
 
@@ -432,7 +436,6 @@ class TaggerConfig {
 const configHandlers = {
     "TokenConfig": "_handleTokenConfig",
     "TileConfig": "_handleTileConfig",
-    "ActiveTileConfig": "_handleTileConfig", // Monk's Active Tiles
     "DrawingConfig": "_handleDrawingConfig",
     "AmbientLightConfig": "_handleAmbientLightConfig", // v9
     "LightConfig": "_handleGenericConfig", // v8
