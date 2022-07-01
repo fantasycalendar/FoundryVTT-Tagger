@@ -269,6 +269,7 @@ export default class Tagger {
             ...Array.from(scene.tiles),
             ...Array.from(scene.walls),
             ...Array.from(scene.drawings),
+            ...Array.from(scene.notes),
         ].deepFlatten().filter(Boolean)
     }
 
