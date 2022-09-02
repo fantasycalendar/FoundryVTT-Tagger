@@ -2,7 +2,7 @@ import { hotkeyState, registerHotkeysPost, registerHotkeysPre } from "./hotkeys.
 import CONSTANTS from "./constants.js";
 
 export default class Tagger {
-
+  
   /**
    * Gets PlaceableObjects with matching tags provided to the method
    *
@@ -22,7 +22,7 @@ export default class Tagger {
   static getByTag(inTags, inOptions = {}) {
     return Tagger._getObjectsByTags(inTags, inOptions, "getByTag");
   }
-
+  
   /**
    * Verifies whether a given PlaceableObject or Document has the tags given
    *
@@ -38,7 +38,7 @@ export default class Tagger {
   static hasTags(inObject, inTags, inOptions = {}) {
     return Tagger._getObjectsByTags(inTags, foundry.utils.mergeObject(inOptions, { objects: [inObject] }), "hasTags").length > 0;
   }
-
+  
   /**
    * Gets all tags from a given PlaceableObject or Document
    *
@@ -51,7 +51,7 @@ export default class Tagger {
     const tags = relevantDocument?.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.TAGS) ?? [];
     return this._validateTags(tags, "getTags");
   }
-
+  
   /**
    * Set the tags on an PlaceableObject or Document, completely overwriting existing tags on the object
    *
@@ -65,7 +65,7 @@ export default class Tagger {
     const providedTags = this._validateTags(inTags, "setTags");
     return this._updateTags(relevantObjects, { inTags: providedTags, isSetting: true });
   }
-
+  
   /**
    * Toggles the tags on an PlaceableObject or Document. If a tag is present, it will be removed. If it not present, it will be added.
    *
@@ -79,7 +79,7 @@ export default class Tagger {
     const providedTags = this._validateTags(inTags, "toggleTags");
     return this._updateTags(relevantObjects, { inTags: providedTags, isToggling: true });
   }
-
+  
   /**
    * Adds tags to an object
    *
@@ -93,7 +93,7 @@ export default class Tagger {
     const providedTags = this._validateTags(inTags, "addTags");
     return this._updateTags(relevantObjects, { inTags: providedTags });
   }
-
+  
   /**
    * Removes tags from an object
    *
@@ -107,7 +107,7 @@ export default class Tagger {
     const providedTags = this._validateTags(inTags, "removeTags");
     return this._updateTags(relevantObjects, { inTags: providedTags, isAdding: false });
   }
-
+  
   /**
    * Removes all tags from PlaceableObjects
    *
@@ -119,7 +119,7 @@ export default class Tagger {
     const relevantObjects = this._validateObjects(inObjects, "clearAllTags");
     return this._updateTags(relevantObjects);
   }
-
+  
   /**
    * Applies all tag rules to every tag found on the given PlaceableObjects
    *
@@ -131,7 +131,7 @@ export default class Tagger {
     const relevantObjects = this._validateObjects(inObjects, "applyTagRules");
     return this._updateTags(relevantObjects, { applyRules: true });
   }
-
+  
   /**
    * Updates the tags on a given set of objects
    *
@@ -151,14 +151,14 @@ export default class Tagger {
     isToggling = false,
     applyRules = false
   } = {}) {
-
+    
     if (!inTags && !applyRules) {
       for (let obj of inObjects) {
         await obj.unsetFlag(CONSTANTS.MODULE_NAME, CONSTANTS.TAGS);
       }
       return;
     }
-
+    
     for (let obj of inObjects) {
       let tags = new Set(this.getTags(obj));
       if (isToggling) {
@@ -187,7 +187,7 @@ export default class Tagger {
       }
     }
   }
-
+  
   /**
    * Gets objects in a scene based on a given set of tags and options
    *
@@ -198,7 +198,7 @@ export default class Tagger {
    * @private
    */
   static _getObjectsByTags(inTags, inOptions, inFunctionName) {
-
+    
     const options = foundry.utils.mergeObject({
       objects: false,
       ignore: false,
@@ -208,7 +208,7 @@ export default class Tagger {
       caseInsensitive: false,
       sceneId: game.canvas.id
     }, inOptions)
-
+    
     if (typeof options.matchAny !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.matchAny must be of type boolean`);
     if (typeof options.caseInsensitive !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.caseInsensitive must be of type boolean`);
     if (typeof options.matchExactly !== "boolean") throw new Error(`Tagger | ${inFunctionName} | options.matchExactly must be of type boolean`);
@@ -219,27 +219,27 @@ export default class Tagger {
     if (!options.allScenes) {
       if (typeof options.sceneId !== "string") throw new Error(`Tagger | ${inFunctionName} | options.sceneId must be of type string`);
     }
-
+    
     const providedTags = this._validateTags(inTags, inFunctionName)
       .map(t => t instanceof RegExp ? t : options.caseInsensitive ? t.toLowerCase() : t)
       .map(t => t instanceof RegExp ? t : `^${t}$`)
       .map(t => t instanceof RegExp ? t : new RegExp(t.replaceAll(".", "\.").replaceAll("*", "(.*?)")));
-
+    
     if (options.allScenes) {
       return this._testTagsOnAllObjectsFromAllScenes(providedTags, options);
     }
-
+    
     let scene = game.scenes.get(options.sceneId);
     if (!scene) throw new Error(`Tagger | ${inFunctionName} | could not find scene with id ${options.sceneId}`);
-
+    
     if (!options.objects) {
       options.objects = this._getObjectsFromScene(scene);
     }
-
+    
     return this._testObjectsTags(providedTags, options);
-
+    
   }
-
+  
   /**
    * Gets all objects from all scenes based on a set of tags and options
    *
@@ -249,19 +249,19 @@ export default class Tagger {
    * @private
    */
   static _testTagsOnAllObjectsFromAllScenes(inTestTags, options) {
-
+    
     return Object.fromEntries(Array.from(game.scenes).map(scene => {
-
+      
       const sceneOptions = foundry.utils.mergeObject(options, {
         objects: this._getObjectsFromScene(scene)
       });
-
+      
       return [[scene.id], this._testObjectsTags(inTestTags, sceneOptions)];
-
+      
     }).filter(entry => entry[1].length));
-
+    
   }
-
+  
   /**
    * Gets all objects from a scene
    *
@@ -281,7 +281,7 @@ export default class Tagger {
       ...Array.from(scene.notes),
     ].deepFlatten().filter(Boolean)
   }
-
+  
   /**
    * Tests objects' tags against a set of tags
    *
@@ -291,17 +291,17 @@ export default class Tagger {
    * @private
    */
   static _testObjectsTags(inTestTags, options) {
-
+    
     if (options.ignore) {
       options.objects = options.objects.filter(obj => !options.ignore.includes(obj));
     }
-
+    
     return options.objects.filter(obj => {
       return this._testObject(obj, inTestTags, options);
     }).map(obj => options.returnObjects ? (obj._object ?? obj) : obj);
-
+    
   }
-
+  
   /**
    * Tests an object's tags against a set of tags
    *
@@ -312,31 +312,31 @@ export default class Tagger {
    * @private
    */
   static _testObject(inObject, inTestTags, options) {
-
+    
     let objectTags = this.getTags(inObject);
-
+    
     if (!objectTags) return false;
-
+    
     objectTags = objectTags.map(tag => options.caseInsensitive ? tag.toLowerCase() : tag)
-
+    
     const matchedTags = inTestTags.filter(testTag => {
       return objectTags.filter(tag => {
         return testTag.test(tag);
       }).length;
     })
-
+    
     if (options.matchAny) {
       return matchedTags.length;
     }
-
+    
     if (options.matchExactly) {
       return matchedTags.length === inTestTags.length && objectTags.length === inTestTags.length;
     }
-
+    
     return matchedTags.length >= inTestTags.length;
-
+    
   }
-
+  
   /**
    * Validates tags so that we know they are clean
    *
@@ -347,18 +347,18 @@ export default class Tagger {
    */
   static _validateTags(inTags, inFunctionName) {
     if (!(typeof inTags === "string" || inTags instanceof RegExp || Array.isArray(inTags))) throw new Error(`Tagger | ${inFunctionName} | inTags must be of type string or array`);
-
+    
     let providedTags = typeof inTags === "string" ? inTags.split(",") : inTags;
-
+    
     if (!Array.isArray(providedTags)) providedTags = [providedTags]
-
+    
     providedTags.forEach(t => {
       if (!(typeof t === "string" || t instanceof RegExp)) throw new Error(`Tagger | ${inFunctionName} | tags in array must be of type string or regexp`);
     });
-
+    
     return providedTags.map(t => t instanceof RegExp ? t : t.trim());
   }
-
+  
   /**
    * Casts a set of objects to their documents
    *
@@ -377,7 +377,7 @@ export default class Tagger {
 }
 
 class TaggerConfig {
-
+  
   static _handleRenderFormApplication(app, html) {
     let method = configHandlers[app.constructor.name];
     if (!method) {
@@ -387,39 +387,39 @@ class TaggerConfig {
     }
     TaggerConfig[method](app, html, true);
   }
-
+  
   static _handleTokenConfig(app, html) {
     const elem = html.find(`div[data-tab="character"]`);
     this._applyHtml(app, elem);
   }
-
+  
   static _handleTileConfig(app, html) {
     const elem = html.find(`div[data-tab="basic"]`);
     this._applyHtml(app, elem);
   }
-
+  
   static _handleDrawingConfig(app, html) {
     const elem = html.find(`div[data-tab="position"]`);
     this._applyHtml(app, elem);
   }
-
+  
   static _handleAmbientLightConfig(app, html) {
     let elem = html.find(`button[name="submit"]`).parent();
     this._applyHtml(app, elem, true);
   }
-
+  
   static _handleGenericConfig(app, html) {
     const elem = html.find(`button[name="submit"]`);
     this._applyHtml(app, elem, true);
   }
-
+  
   static _applyHtml(app, elem, insertBefore = false) {
     if (!elem) return;
-
+    
     const tags = app?.object instanceof Actor
       ? Tagger._validateTags(getProperty(app?.object, `data.token.${CONSTANTS.TAG_PROPERTY}`) ?? [], "_applyHtml")
       : Tagger.getTags(app?.object?._object);
-
+    
     const html = $(`
         <fieldset style="margin: 3px 0;">
 			<legend>Tags (separated by commas)</legend>
@@ -428,12 +428,12 @@ class TaggerConfig {
 				<button type="button" style="flex: 0; height: 28px; width: 28px; line-height: 0; font-size: 0.75rem; margin-left: 10px;"><i class="fas fa-check"></i></button>
 			</div>
 		</fieldset>`);
-
+    
     html.find('button').click(function () {
       const tags = Tagger._validateTags(html.find('input').val());
       html.find('input').val(TaggerHandler.applyRules(tags).join(", "));
     });
-
+    
     if (insertBefore) {
       html.insertBefore(elem);
     } else {
@@ -460,7 +460,7 @@ Hooks.on("renderFormApplication", TaggerConfig._handleRenderFormApplication);
 let temporaryIds = {};
 
 class TaggerHandler {
-
+  
   static applyUpdateTags(inDocument, updateData) {
     let propertyName = CONSTANTS.TAG_PROPERTY;
     if (inDocument instanceof Actor) propertyName = "token." + propertyName;
@@ -469,7 +469,7 @@ class TaggerHandler {
     tags = Tagger._validateTags(tags, "_applyTags");
     setProperty(updateData, propertyName, tags);
   }
-
+  
   static preCreateApplyTags(inDocument, documentData) {
     if (hotkeyState.dropNoRules) return;
     temporaryIds = {};
@@ -477,62 +477,53 @@ class TaggerHandler {
     temporaryIds = {};
     return inDocument.data.update(documentData);
   }
-
+  
   static applyCreateTags(documentData) {
-
+    
     const preprocessed = getProperty(documentData, `${CONSTANTS.DATA_PROPERTY}.preprocessed`);
     if (preprocessed) {
       setProperty(documentData, `${CONSTANTS.DATA_PROPERTY}.preprocessed`, false);
       return;
     }
-
+    
     let tags = getProperty(documentData, CONSTANTS.TAG_PROPERTY);
-
+    
     if (tags) {
       tags = this.applyRules(tags);
       setProperty(documentData, CONSTANTS.TAG_PROPERTY, tags);
     }
-
+    
     if (game.modules.get("token-attacher")?.active) {
       this.recurseTokenAttacher(documentData);
     }
-
+    
     if (game.modules.get("monks-active-tiles")?.active) {
       const monkActions = documentData?.flags?.["monks-active-tiles"]?.actions ?? [];
+      const names = ["location.name", "entity.name"];
+      const ids = ["location.id", "entity.id"];
       monkActions.forEach((action, i) => {
-
-        let locationName = action?.data?.location?.name;
-        if (locationName && locationName.startsWith("[Tagger] ")) {
-          const tag = locationName.replace("[Tagger] ", "");
-          const [newTag] = this.applyRules([tag]);
-          setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.location.name`, `[Tagger] ${newTag}`);
+        for (const nameProperty of names) {
+          let locationName = getProperty(action?.data, nameProperty);
+          if (locationName && locationName.startsWith("[Tagger] ")) {
+            const tags = locationName.replace("[Tagger] ", "");
+            const newTags = this.applyRules(tags).join(", ");
+            setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + nameProperty, `[Tagger] ${newTags}`);
+          }
         }
-
-        let locationId = action?.data?.location?.id;
-        if (locationId && locationId.startsWith("tagger:")) {
-          const tag = locationId.replace("tagger:", "");
-          const [newTag] = this.applyRules([tag]);
-          setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.location.id`, `tagger:${newTag}`);
+        
+        for (const idProperty of ids) {
+          let locationId = getProperty(action?.data, idProperty);
+          if (locationId && locationId.startsWith("tagger:")) {
+            const tags = locationId.replace("tagger:", "");
+            const newTags = this.applyRules(tags).join(", ");
+            setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + idProperty, `tagger:${newTags}`);
+          }
         }
-
-        let entityName = action?.data?.entity?.name;
-        if (entityName && entityName.startsWith("[Tagger] ")) {
-          const tag = entityName.replace("[Tagger] ", "");
-          const [newTag] = this.applyRules([tag]);
-          setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.entity.name`, `[Tagger] ${newTag}`);
-        }
-
-        let entityId = action?.data?.entity?.id;
-        if (entityId && entityId.startsWith("tagger:")) {
-          const tag = entityId.replace("tagger:", "");
-          const [newTag] = this.applyRules([tag]);
-          setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.entity.id`, `tagger:${newTag}`);
-        }
-      })
+      });
     }
-
+    
   }
-
+  
   static recurseTokenAttacher(documentData) {
     const prototypeAttached = getProperty(documentData, "flags.token-attacher.prototypeAttached");
     if (prototypeAttached) {
@@ -544,34 +535,34 @@ class TaggerHandler {
       }
     }
   }
-
+  
   static applyRules(tags) {
-
+    
     const tagRules = Object.entries(this.rules).filter(entry => {
       entry[0] = new RegExp(`${entry[0]}`, "g");
       return entry;
     });
-
+    
     tags = Tagger._validateTags(tags, "TaggerHandler");
-
+    
     return tags.map((tag, index) => {
-
+      
       const applicableTagRules = tagRules.filter(([regx]) => {
         return tag.match(regx)
       });
       if (!applicableTagRules.length) return tag;
-
+      
       applicableTagRules.forEach(([regx, method]) => {
         tag = method(tag, regx, index);
       })
-
+      
       return tag;
     });
-
+    
   }
-
+  
   static rules = {
-
+    
     /**
      * Replaces a portion of the tag with a number based on how many objects in this scene has the same numbered tag
      * @private
@@ -580,13 +571,13 @@ class TaggerHandler {
       const findTag = new RegExp("^" + tag.replace(regx, "([1-9]+[0-9]*)") + "$");
       const existingDocuments = Tagger.getByTag(findTag)
       if (!existingDocuments.length) return tag.replace(regx, 1);
-
+      
       const numbers = existingDocuments.map(existingDocument => {
         return Number(Tagger.getTags(existingDocument).find(tag => {
           return tag.match(findTag);
         }).match(findTag)[1]);
       })
-
+      
       const length = Math.max(...numbers) + 1;
       for (let i = 1; i <= length; i++) {
         if (!numbers.includes(i)) {
@@ -594,7 +585,7 @@ class TaggerHandler {
         }
       }
     },
-
+    
     /**
      *  Replaces the section of the tag with a random ID
      *  @private

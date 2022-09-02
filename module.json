@@ -7,7 +7,7 @@
   "flags": {},
   "version": "This is auto replaced",
   "minimumCoreVersion": "0.8.9",
-  "compatibleCoreVersion": "9.000",
+  "compatibleCoreVersion": "10.000",
   "scripts": [],
   "esmodules": [
     "/scripts/module.js"
