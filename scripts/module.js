@@ -405,12 +405,14 @@ class TaggerConfig {
   }
   
   static _handleAmbientLightConfig(app, html) {
-    let elem = html.find(`button[name="submit"]`).parent();
+    let button = html.find(`button[name="submit"]`);
+    let elem = (button.length ? button : html.find(`button[type="submit"]`)).parent();
     this._applyHtml(app, elem, true);
   }
   
   static _handleGenericConfig(app, html) {
-    const elem = html.find(`button[name="submit"]`);
+    let button = html.find(`button[name="submit"]`);
+    let elem = (button.length ? button : html.find(`button[type="submit"]`));
     this._applyHtml(app, elem, true);
   }
   
