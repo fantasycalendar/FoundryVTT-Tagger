@@ -26,7 +26,7 @@ export default class Tagger {
   /**
    * Verifies whether a given PlaceableObject or Document has the tags given
    *
-   * @param    {PlaceableObject}    inObject    A PlaceableObject, or an array of PlaceableObjects to check for tags on
+   * @param    {PlaceableObject}    inObjects   A PlaceableObject, or an array of PlaceableObjects to check for tags on
    * @param    {String/Array}       inTags      An array of tags or a string of tags (separated by commas) that will be searched for
    * @param    {Object}             inOptions   An optional object that can contain any of the following:
    *                                              <br>- matchAny {Boolean}        - whether the PlaceableObjects can contain any of the provided tags
@@ -35,8 +35,9 @@ export default class Tagger {
    *
    * @returns  {Boolean}                        Returns a boolean whether the object has the given tags
    */
-  static hasTags(inObject, inTags, inOptions = {}) {
-    return Tagger._getObjectsByTags(inTags, foundry.utils.mergeObject(inOptions, { objects: [inObject] }), "hasTags").length > 0;
+  static hasTags(inObjects, inTags, inOptions = {}) {
+    const relevantObjects = this._validateObjects(inObjects, "setTags");
+    return Tagger._getObjectsByTags(inTags, foundry.utils.mergeObject(inOptions, { objects: relevantObjects }), "hasTags").length > 0;
   }
   
   /**
@@ -158,7 +159,7 @@ export default class Tagger {
       }
       return;
     }
-    
+    inTags = inTags || [];
     for (let obj of inObjects) {
       let tags = new Set(this.getTags(obj));
       if (isToggling) {
@@ -176,7 +177,7 @@ export default class Tagger {
       } else {
         inTags.forEach(t => tags.delete(t));
       }
-      if (tags.size === 0) {
+      if (tags.size === 0 && !applyRules) {
         await obj.unsetFlag(CONSTANTS.MODULE_NAME, CONSTANTS.TAGS);
       } else {
         tags = Array.from(tags);
@@ -475,7 +476,7 @@ class TaggerHandler {
     temporaryIds = {};
     this.applyCreateTags(documentData);
     temporaryIds = {};
-    return inDocument.data.update(documentData);
+    return inDocument?.updateSource ? inDocument.updateSource(documentData) : inDocument.data.update(documentData);
   }
   
   static applyCreateTags(documentData) {
@@ -520,6 +521,26 @@ class TaggerHandler {
           }
         }
       });
+  
+      let monkEntity = documentData?.flags?.["monks-active-tiles"]?.entity;
+      if(monkEntity) {
+        let reparse = false;
+        if (typeof monkEntity === "string") {
+          monkEntity = JSON.parse(monkEntity);
+          setProperty(documentData, `flags.monks-active-tiles.entity`, monkEntity);
+          reparse = true;
+        }
+        let entityId = getProperty(monkEntity, "id");
+        if (entityId && entityId.startsWith("tagger:")) {
+          const tags = entityId.replace("tagger:", "");
+          const newTags = this.applyRules(tags).join(", ");
+          setProperty(documentData, `flags.monks-active-tiles.entity.id`, `tagger:${newTags}`);
+        }
+        if(reparse){
+          setProperty(documentData, `flags.monks-active-tiles.entity`, JSON.stringify(monkEntity));
+        }
+      }
+      
     }
     
   }

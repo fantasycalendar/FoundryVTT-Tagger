@@ -1,21 +1,32 @@
 {
+  "id": "tagger",
   "name": "tagger",
   "title": "Tagger",
   "description": "A global tags manager for easy manipulation of objects of similar types",
-  "author": "Wasp (Wasp#2005)",
-  "url": "https://github.com/fantasycalendar/FoundryVTT-Tagger",
-  "flags": {},
+  "authors": [
+    {
+      "name": "Wasp",
+      "discord": "Wasp#2005",
+      "website": "http://fantasycomputer.works/"
+    }
+  ],
   "version": "This is auto replaced",
-  "minimumCoreVersion": "0.8.9",
-  "compatibleCoreVersion": "10.000",
+  "minimumCoreVersion": "8.9",
+  "compatibility": {
+    "minimum": "8.9",
+    "verified": "10"
+  },
   "scripts": [],
   "esmodules": [
     "/scripts/module.js"
   ],
   "socket": false,
-  "manifest": "This is auto replaced",
-  "download": "This is auto replaced",
   "protected": false,
   "coreTranslation": false,
-  "library": "false"
+  "library": "false",
+  "url": "https://github.com/fantasycalendar/FoundryVTT-Tagger",
+  "manifest": "https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/latest/download/module.json",
+  "download": "https://github.com/fantasycalendar/FoundryVTT-Tagger/releases/latest/download/module.zip",
+  "readme": "https://github.com/fantasycalendar/FoundryVTT-Tagger/blob/master/README.md",
+  "bugs": "https://github.com/fantasycalendar/FoundryVTT-Tagger/issues"
 }
