@@ -418,10 +418,8 @@ class TaggerConfig {
   
   static _applyHtml(app, elem, insertBefore = false) {
     if (!elem) return;
-    
-    const tags = app?.object instanceof Actor
-      ? Tagger._validateTags(getProperty(app?.object, `data.token.${CONSTANTS.TAG_PROPERTY}`) ?? [], "_applyHtml")
-      : Tagger.getTags(app?.object?._object);
+
+    const tags = Tagger.getTags(app?.object?._object ?? app?.object);
     
     const html = $(`
         <fieldset style="margin: 3px 0;">
