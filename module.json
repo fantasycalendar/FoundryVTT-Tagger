@@ -20,6 +20,9 @@
   "esmodules": [
     "/scripts/module.js"
   ],
+  "styles": [
+    "./style.css"
+  ],
   "socket": false,
   "protected": false,
   "coreTranslation": false,

@@ -357,7 +357,7 @@ export default class Tagger {
       if (!(typeof t === "string" || t instanceof RegExp)) throw new Error(`Tagger | ${inFunctionName} | tags in array must be of type string or regexp`);
     });
     
-    return providedTags.map(t => t instanceof RegExp ? t : t.trim());
+    return providedTags.map(t => t instanceof RegExp ? t : t.trim()).filter(Boolean);
   }
   
   /**
@@ -415,48 +415,166 @@ class TaggerConfig {
     let elem = (button.length ? button : html.find(`button[type="submit"]`));
     this._applyHtml(app, elem, true);
   }
-  
+
   static _applyHtml(app, elem, insertBefore = false) {
     if (!elem) return;
-
-    const tags = Tagger.getTags(app?.object?._object ?? app?.object);
-    
-    const html = $(`
-        <fieldset style="margin: 3px 0;">
-			<legend>Tags (separated by commas)</legend>
-			<div class="form-group">
-				<input name="${CONSTANTS.TAG_PROPERTY}" type="text" value="${tags.join(', ')}">
-				<button type="button" style="flex: 0; height: 28px; width: 28px; line-height: 0; font-size: 0.75rem; margin-left: 10px;"><i class="fas fa-check"></i></button>
-			</div>
-		</fieldset>`);
-    
-    html.find('button').click(function () {
-      const tags = Tagger._validateTags(html.find('input').val());
-      html.find('input').val(TaggerHandler.applyRules(tags).join(", "));
-    });
-    
-    if (insertBefore) {
-      html.insertBefore(elem);
-    } else {
-      elem.append(html);
-    }
-    app.setPosition({ height: "auto" });
+    new TagManager(app, elem, insertBefore);
   }
 }
 
-const configHandlers = {
-  "TokenConfig": "_handleTokenConfig",
-  "TileConfig": "_handleTileConfig",
-  "DrawingConfig": "_handleDrawingConfig",
-  "AmbientLightConfig": "_handleAmbientLightConfig", // v9
-  "LightConfig": "_handleGenericConfig", // v8
-  "WallConfig": "_handleGenericConfig",
-  "AmbientSoundConfig": "_handleGenericConfig",
-  "MeasuredTemplateConfig": "_handleGenericConfig",
-  "NoteConfig": "_handleGenericConfig"
-}
+class TagManager {
 
-Hooks.on("renderFormApplication", TaggerConfig._handleRenderFormApplication);
+  constructor(app, elem, insertBefore) {
+    this._tags = [];
+    this.app = app;
+    this.elem = elem;
+    this.insertBefore = insertBefore;
+    const object = this.app?.object?._object ?? app?.object;
+    this.tagDocument = object?.document ?? object;
+    this.createElements()
+    this.tags = Tagger.getTags(this.tagDocument).filter(Boolean);
+    this.closing = false;
+  }
+
+  get tags(){
+    return this._tags;
+  }
+
+  set tags(tags){
+    this._tags = Array.from(new Set(tags.map(tag => tag.trim()).filter(Boolean)));
+    this.hiddenInput.value = this._tags.join(",");
+    if(this.closing) return;
+    this.populateTags();
+  }
+
+  createElements() {
+
+    const fieldset = document.createElement("fieldset")
+    fieldset.setAttribute("class", "tagger");
+
+    const legend = document.createElement("legend");
+    legend.innerHTML = "Tagger (press enter to complete)";
+    fieldset.appendChild(legend);
+
+    const inputContainer = document.createElement("div");
+    inputContainer.setAttribute("class", "form-group");
+
+    this.input = document.createElement("input");
+    this.input.setAttribute("type", "text");
+    this.input.onkeydown = (evt) => this.inputKeyDown(evt);
+
+    inputContainer.appendChild(this.input);
+
+    this.hiddenInput = document.createElement("input");
+    this.hiddenInput.setAttribute("type", "hidden");
+    this.hiddenInput.setAttribute("name", CONSTANTS.TAG_PROPERTY);
+
+    inputContainer.appendChild(this.hiddenInput);
+
+    const addTagButton = document.createElement("button");
+    addTagButton.setAttribute("type", "button");
+    addTagButton.setAttribute("style", "min-width: 65px;");
+    addTagButton.innerHTML = "Add tags";
+    addTagButton.onclick = () => this.addTagsFromInput();
+    inputContainer.appendChild(addTagButton);
+
+    const applyRulesButton = document.createElement("button");
+    applyRulesButton.setAttribute("type", "button");
+    applyRulesButton.setAttribute("data-tooltip", "Apply tag rules");
+    applyRulesButton.onclick = () => this.applyRulesButtonClicked();
+
+    inputContainer.appendChild(applyRulesButton);
+
+    const applyRulesIcon = document.createElement("i");
+    applyRulesIcon.setAttribute("class", "fas fa-check");
+    applyRulesButton.appendChild(applyRulesIcon);
+
+    this.tagContainer = document.createElement("div");
+    this.tagContainer.setAttribute("class", "tag-container");
+
+    fieldset.appendChild(inputContainer);
+    fieldset.appendChild(this.tagContainer);
+
+    if(this.insertBefore){
+      this.elem.insertBefore(fieldset);
+    }else{
+      this.elem.append(fieldset);
+    }
+
+    this.elem.closest("form").find(`button:last[type="submit"]`).on("click", () => {
+      this.closing = true;
+      this.addTagsFromInput();
+    });
+  }
+
+  addTagsFromInput() {
+    const tag = Tagger._validateTags(this.input.value, "Add Tags");
+    this.tags = this.tags.concat(tag);
+    if(this.closing) return;
+    this.input.value = "";
+  }
+
+  applyRulesButtonClicked() {
+    this.tags = TaggerHandler.applyRules(this.tags);
+  }
+
+  removeButtonClicked(index) {
+    const newTags = this.tags;
+    newTags.splice(index, 1);
+    this.tags = newTags;
+  }
+
+  inputKeyDown(evt) {
+    if(evt.key !== "Enter") return;
+    evt.preventDefault();
+    evt.stopPropagation();
+    this.addTagsFromInput();
+  }
+
+  editTagClicked(index){
+    const tag = this.tags[index];
+    this.removeButtonClicked(index);
+    let currentInput = this.input.value.trim();
+    if(currentInput){
+      currentInput += ", " + tag;
+    }else{
+      currentInput = tag;
+    }
+    this.input.value = currentInput;
+    this.input.focus();
+  }
+
+  populateTags(){
+    this.tagContainer.innerHTML = "";
+    for(const [index, tag] of this.tags.entries()){
+      const tagString = tag.trim();
+      if(!tagString) continue;
+      this.createTagElement(tagString, index)
+    }
+    this.app.setPosition({ height: "auto" });
+  }
+
+  createTagElement(tag, index){
+
+    const div = document.createElement("div");
+    div.setAttribute("class", "tag");
+
+    const span = document.createElement("span");
+    span.innerHTML = tag;
+    span.onclick = () => this.editTagClicked(index);
+
+    const closeButton = document.createElement("i");
+    closeButton.setAttribute("class", "fas fa-times");
+    closeButton.onclick = () => this.removeButtonClicked(index);
+
+    div.appendChild(span);
+    div.appendChild(closeButton);
+
+    this.tagContainer.appendChild(div);
+
+  }
+
+}
 
 let temporaryIds = {};
 
@@ -464,10 +582,13 @@ class TaggerHandler {
   
   static applyUpdateTags(inDocument, updateData) {
     let propertyName = CONSTANTS.TAG_PROPERTY;
-    if (inDocument instanceof Actor) propertyName = "token." + propertyName;
+    if (inDocument instanceof Actor) propertyName = "prototypeToken." + propertyName;
     let tags = getProperty(updateData, propertyName);
-    if (!tags || tags?.length === 0) return;
     tags = Tagger._validateTags(tags, "_applyTags");
+    if(!tags.length){
+      propertyName = propertyName.replace(CONSTANTS.TAG_PROPERTY, CONSTANTS.REMOVE_TAG_PROPERTY);
+      tags = null;
+    }
     setProperty(updateData, propertyName, tags);
   }
   
@@ -625,26 +746,24 @@ class TaggerHandler {
   }
 }
 
-Hooks.on("preUpdateActor", (...args) => TaggerHandler.applyUpdateTags(...args));
-Hooks.on("preUpdateToken", (...args) => TaggerHandler.applyUpdateTags(...args));
-Hooks.on("preUpdateTile", (...args) => TaggerHandler.applyUpdateTags(...args));
-Hooks.on("preUpdateDrawing", (...args) => TaggerHandler.applyUpdateTags(...args));
-Hooks.on("preUpdateWall", (...args) => TaggerHandler.applyUpdateTags(...args));
-Hooks.on("preUpdateLight", (...args) => TaggerHandler.applyUpdateTags(...args)); // 0.8.9
-Hooks.on("preUpdateAmbientLight", (...args) => TaggerHandler.applyUpdateTags(...args));
-Hooks.on("preUpdateAmbientSound", (...args) => TaggerHandler.applyUpdateTags(...args));
-Hooks.on("preUpdateMeasuredTemplate", (...args) => TaggerHandler.applyUpdateTags(...args));
-Hooks.on("preUpdateNote", (...args) => TaggerHandler.applyUpdateTags(...args));
+const configHandlers = {
+  "TokenConfig": "_handleTokenConfig",
+  "TileConfig": "_handleTileConfig",
+  "DrawingConfig": "_handleDrawingConfig",
+  "AmbientLightConfig": "_handleAmbientLightConfig", // v9
+  "LightConfig": "_handleGenericConfig", // v8
+  "WallConfig": "_handleGenericConfig",
+  "AmbientSoundConfig": "_handleGenericConfig",
+  "MeasuredTemplateConfig": "_handleGenericConfig",
+  "NoteConfig": "_handleGenericConfig"
+}
 
-Hooks.on("preCreateToken", (...args) => TaggerHandler.preCreateApplyTags(...args));
-Hooks.on("preCreateTile", (...args) => TaggerHandler.preCreateApplyTags(...args));
-Hooks.on("preCreateDrawing", (...args) => TaggerHandler.preCreateApplyTags(...args));
-Hooks.on("preCreateWall", (...args) => TaggerHandler.preCreateApplyTags(...args));
-Hooks.on("preCreateLight", (...args) => TaggerHandler.preCreateApplyTags(...args)); // 0.8.9
-Hooks.on("preCreateAmbientLight", (...args) => TaggerHandler.preCreateApplyTags(...args));
-Hooks.on("preCreateAmbientSound", (...args) => TaggerHandler.preCreateApplyTags(...args));
-Hooks.on("preCreateMeasuredTemplate", (...args) => TaggerHandler.preCreateApplyTags(...args));
-Hooks.on("preCreateNote", (...args) => TaggerHandler.preCreateApplyTags(...args));
+Hooks.on("renderFormApplication", TaggerConfig._handleRenderFormApplication);
+
+for (const obj of ["Actor", "Token", "Tile", "Drawing", "Wall", "Light", "AmbientLight", "AmbientSound", "MeasuredTemplate", "Note" ]){
+  Hooks.on(`preUpdate${obj}`, (...args) => TaggerHandler.applyUpdateTags(...args));
+  Hooks.on(`preCreate${obj}`, (...args) => TaggerHandler.preCreateApplyTags(...args));
+}
 
 Hooks.once('init', async function () {
   registerHotkeysPre();
