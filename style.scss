@@ -1,0 +1,60 @@
+fieldset.tagger {
+  margin: 5px 0;
+
+  .tag-container {
+
+    display: flex;
+    flex-wrap: wrap;
+
+    .tag {
+      padding: 5px 5px 5px 8px;
+      border: 1px solid rgb(155, 155, 155);
+      margin: 3px 3px 3px 0;
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+      background: #eeede0;
+
+      > * {
+        cursor: pointer;
+      }
+
+      span {
+        &:hover{
+          color: #834100;
+        }
+      }
+
+      i {
+        font-size: 1rem;
+        padding: 0 5px;
+
+        &:hover{
+          color: #e30f0f;
+        }
+      }
+
+      &:has(i:hover) {
+        background-color: #ffb6b6;
+      }
+
+      &:has(span:hover) {
+        background-color: #fffdd4;
+      }
+    }
+
+  }
+
+  .form-group {
+
+    button {
+      flex: 0;
+      height: 28px;
+      width: 28px;
+      line-height: inherit;
+      font-size: 0.75rem;
+      margin-left: 10px;
+    }
+
+  }
+}
