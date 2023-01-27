@@ -631,10 +631,12 @@ class TaggerHandler {
     let propertyName = CONSTANTS.TAG_PROPERTY;
     if (inDocument instanceof Actor) propertyName = "prototypeToken." + propertyName;
     let tags = getProperty(updateData, propertyName);
-    tags = Tagger._validateTags(tags, "_applyTags");
-    if(!tags.length){
+    if(tags === undefined) return;
+    if(!tags?.length){
       propertyName = propertyName.replace(CONSTANTS.TAG_PROPERTY, CONSTANTS.REMOVE_TAG_PROPERTY);
       tags = null;
+    }else{
+      tags = Tagger._validateTags(tags, "_applyTags");
     }
     setProperty(updateData, propertyName, tags);
   }
