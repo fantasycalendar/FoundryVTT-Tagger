@@ -529,7 +529,7 @@ class TagManager {
     fieldset.appendChild(this.tagContainer);
 
     if(this.insertBefore){
-      this.elem.insertBefore(fieldset);
+      $(fieldset).insertBefore(this.elem);
     }else{
       this.elem.append(fieldset);
     }
