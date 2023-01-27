@@ -600,17 +600,18 @@ class TagManager {
       div.classList.add('dropping');
     }
     div.ondragleave = (evt) => {
-      if(!evt.target.className.includes("tag")) return;
+      if(evt.target.className.includes("tag-drop-ignore")) return;
       this.dropIndex = null;
       div.classList.remove('dropping');
     }
 
     const span = document.createElement("span");
+    span.setAttribute("class", "tag-drop-ignore");
     span.innerHTML = tag;
-    span.onclick = () => this.editTagClicked(index);
 
+    span.onclick = () => this.editTagClicked(index);
     const closeButton = document.createElement("i");
-    closeButton.setAttribute("class", "fas fa-times");
+    closeButton.setAttribute("class", "fas fa-times tag-drop-ignore");
     closeButton.onclick = () => this.removeButtonClicked(index);
 
     div.appendChild(span);
