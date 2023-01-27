@@ -14,6 +14,9 @@ fieldset.tagger .tag-container .tag {
   border-radius: 5px;
   background: #eeede0;
 }
+fieldset.tagger .tag-container .tag.dropping {
+  background: #c6eaa7;
+}
 fieldset.tagger .tag-container .tag > * {
   cursor: pointer;
 }

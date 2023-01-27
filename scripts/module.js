@@ -418,22 +418,26 @@ class TaggerConfig {
 
   static _applyHtml(app, elem, insertBefore = false) {
     if (!elem) return;
-    new TagManager(app, elem, insertBefore);
+    const object = this.app?.object?._object ?? app?.object;
+    const tagDocument = object?.document ?? object;
+    tagManagers[tagDocument.uuid] = new TagManager(tagDocument, app, elem, insertBefore);
   }
 }
 
+const tagManagers = {};
+
 class TagManager {
 
-  constructor(app, elem, insertBefore) {
+  constructor(tagDocument, app, elem, insertBefore) {
     this._tags = [];
+    this.tagDocument = tagDocument;
     this.app = app;
     this.elem = elem;
     this.insertBefore = insertBefore;
-    const object = this.app?.object?._object ?? app?.object;
-    this.tagDocument = object?.document ?? object;
     this.createElements()
     this.tags = Tagger.getTags(this.tagDocument).filter(Boolean);
     this.closing = false;
+    this.dropIndex = null;
   }
 
   get tags(){
@@ -449,8 +453,37 @@ class TagManager {
 
   createElements() {
 
-    const fieldset = document.createElement("fieldset")
+    const fieldset = document.createElement("fieldset");
     fieldset.setAttribute("class", "tagger");
+
+    fieldset.ondrop = (evt) => {
+      let dropData = false;
+
+      try {
+        dropData = JSON.parse(evt.dataTransfer.getData("text/plain"));
+      }catch (err) {
+        return;
+      }
+
+      if(!dropData.uuid || !dropData.tag) return;
+
+      if(dropData.uuid === this.tagDocument.uuid) {
+        const toTags = this.tags;
+        toTags.splice(toTags.indexOf(dropData.tag), 1)
+        toTags.splice(this.dropIndex ?? toTags.length, 0, dropData.tag)
+        this.tags = toTags;
+        return;
+      }
+
+      const toTags = this.tags;
+      if (toTags.includes(dropData.tag)) return;
+      toTags.splice(this.dropIndex ?? toTags.length, 0, dropData.tag)
+      this.tags = toTags;
+
+      const fromTags = tagManagers[dropData.uuid].tags;
+      fromTags.splice(dropData.index, 1);
+      tagManagers[dropData.uuid].tags = fromTags;
+    }
 
     const legend = document.createElement("legend");
     legend.innerHTML = "Tagger (press enter to complete)";
@@ -558,6 +591,19 @@ class TagManager {
 
     const div = document.createElement("div");
     div.setAttribute("class", "tag");
+    div.setAttribute("draggable", "true");
+    div.ondragstart = (evt) => {
+      evt.dataTransfer.setData("text/plain", JSON.stringify({ tag, index, uuid: this.tagDocument.uuid }));
+    }
+    div.ondragover = () => {
+      this.dropIndex = index;
+      div.classList.add('dropping');
+    }
+    div.ondragleave = (evt) => {
+      if(!evt.target.className.includes("tag")) return;
+      this.dropIndex = null;
+      div.classList.remove('dropping');
+    }
 
     const span = document.createElement("span");
     span.innerHTML = tag;
