@@ -418,7 +418,7 @@ class TaggerConfig {
 
   static _applyHtml(app, elem, insertBefore = false) {
     if (!elem) return;
-    const object = this.app?.object?._object ?? app?.object;
+    const object = app?.object?._object ?? app?.object;
     const tagDocument = object?.document ?? object;
     tagManagers[tagDocument.uuid] = new TagManager(tagDocument, app, elem, insertBefore);
   }
@@ -646,7 +646,10 @@ class TaggerHandler {
     temporaryIds = {};
     this.applyCreateTags(documentData);
     temporaryIds = {};
-    return inDocument?.updateSource ? inDocument.updateSource(documentData) : inDocument.data.update(documentData);
+    const tags = getProperty(documentData, CONSTANTS.TAG_PROPERTY);
+    if(!tags) return;
+    const update = { [CONSTANTS.TAG_PROPERTY]: tags };
+    return inDocument?.updateSource ? inDocument.updateSource(update) : inDocument.data.update(update);
   }
   
   static applyCreateTags(documentData) {
