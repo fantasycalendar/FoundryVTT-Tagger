@@ -646,10 +646,10 @@ class TaggerHandler {
     temporaryIds = {};
     this.applyCreateTags(documentData);
     temporaryIds = {};
-    const tags = getProperty(documentData, CONSTANTS.TAG_PROPERTY);
-    if(!tags) return;
-    const update = { [CONSTANTS.TAG_PROPERTY]: tags };
-    return inDocument?.updateSource ? inDocument.updateSource(update) : inDocument.data.update(update);
+    const flags = getProperty(documentData, "flags");
+    return inDocument?.updateSource
+      ? inDocument.updateSource({ flags })
+      : inDocument.data.update({ flags });
   }
   
   static applyCreateTags(documentData) {
