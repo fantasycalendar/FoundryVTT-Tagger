@@ -14,7 +14,7 @@
   "minimumCoreVersion": "8.9",
   "compatibility": {
     "minimum": "8.9",
-    "verified": "10"
+    "verified": "11"
   },
   "scripts": [],
   "esmodules": [
