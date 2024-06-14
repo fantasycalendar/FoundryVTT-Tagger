@@ -5,7 +5,7 @@ export const hotkeyState = {
 }
 
 function isVersion9() {
-    return isNewerVersion((game?.version ?? game.data.version), "9.00");
+    return foundry.utils.isNewerVersion((game?.version ?? game.data.version), "9.00");
 }
 
 export function registerHotkeysPre() {

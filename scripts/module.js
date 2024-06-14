@@ -638,7 +638,7 @@ class TaggerHandler {
     }else{
       tags = Tagger._validateTags(tags, "_applyTags");
     }
-    setProperty(updateData, propertyName, tags);
+    foundry.utils.setProperty(updateData, propertyName, tags);
   }
   
   static preCreateApplyTags(inDocument, documentData) {
@@ -656,7 +656,7 @@ class TaggerHandler {
     
     const preprocessed = foundry.utils.getProperty(documentData, `${CONSTANTS.DATA_PROPERTY}.preprocessed`);
     if (preprocessed) {
-      setProperty(documentData, `${CONSTANTS.DATA_PROPERTY}.preprocessed`, false);
+      foundry.utils.setProperty(documentData, `${CONSTANTS.DATA_PROPERTY}.preprocessed`, false);
       return;
     }
     
@@ -664,7 +664,7 @@ class TaggerHandler {
     
     if (tags) {
       tags = this.applyRules(tags);
-      setProperty(documentData, CONSTANTS.TAG_PROPERTY, tags);
+      foundry.utils.setProperty(documentData, CONSTANTS.TAG_PROPERTY, tags);
     }
     
     if (game.modules.get("token-attacher")?.active) {
@@ -681,7 +681,7 @@ class TaggerHandler {
           if (locationName && locationName.startsWith("[Tagger] ")) {
             const tags = locationName.replace("[Tagger] ", "");
             const newTags = this.applyRules(tags).join(", ");
-            setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + nameProperty, `[Tagger] ${newTags}`);
+            foundry.utils.setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + nameProperty, `[Tagger] ${newTags}`);
           }
         }
         
@@ -690,7 +690,7 @@ class TaggerHandler {
           if (locationId && locationId.startsWith("tagger:")) {
             const tags = locationId.replace("tagger:", "");
             const newTags = this.applyRules(tags).join(", ");
-            setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + idProperty, `tagger:${newTags}`);
+            foundry.utils.setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + idProperty, `tagger:${newTags}`);
           }
         }
       });
@@ -700,17 +700,17 @@ class TaggerHandler {
         let reparse = false;
         if (typeof monkEntity === "string") {
           monkEntity = JSON.parse(monkEntity);
-          setProperty(documentData, `flags.monks-active-tiles.entity`, monkEntity);
+          foundry.utils.setProperty(documentData, `flags.monks-active-tiles.entity`, monkEntity);
           reparse = true;
         }
         let entityId = foundry.utils.getProperty(monkEntity, "id");
         if (entityId && entityId.startsWith("tagger:")) {
           const tags = entityId.replace("tagger:", "");
           const newTags = this.applyRules(tags).join(", ");
-          setProperty(documentData, `flags.monks-active-tiles.entity.id`, `tagger:${newTags}`);
+          foundry.utils.setProperty(documentData, `flags.monks-active-tiles.entity.id`, `tagger:${newTags}`);
         }
         if(reparse){
-          setProperty(documentData, `flags.monks-active-tiles.entity`, JSON.stringify(monkEntity));
+          foundry.utils.setProperty(documentData, `flags.monks-active-tiles.entity`, JSON.stringify(monkEntity));
         }
       }
       
@@ -724,7 +724,7 @@ class TaggerHandler {
       for (const objects of Object.values(prototypeAttached)) {
         for (const object of objects) {
           this.applyCreateTags(object)
-          setProperty(object, `${CONSTANTS.DATA_PROPERTY}.preprocessed`, true);
+          foundry.utils.setProperty(object, `${CONSTANTS.DATA_PROPERTY}.preprocessed`, true);
         }
       }
     }
