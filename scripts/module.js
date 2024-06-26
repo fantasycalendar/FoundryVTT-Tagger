@@ -380,6 +380,7 @@ export default class Tagger {
 class TaggerConfig {
 
 	static _handleRenderFormApplication(app, html) {
+		const jqueryHtml = $(html);
 		let method = configHandlers[app.constructor.name];
 		if (!method) {
 			const key = Object.keys(configHandlers).find(name => app.constructor.name.includes(name));
@@ -390,35 +391,40 @@ class TaggerConfig {
 	}
 
 	static _handleTokenConfig(app, html) {
-		const elem = html.find(`div[data-tab="character"]`);
+		const jqueryHtml = $(html);
+		const elem = jqueryHtml.find(`div[data-tab="character"]`);
 		this._applyHtml(app, elem);
 	}
 
 	static _handleTileConfig(app, html) {
-		const elem = html.find(`div[data-tab="basic"]`);
+		const jqueryHtml = $(html);
+		const elem = jqueryHtml.find(`div[data-tab="basic"]`);
 		this._applyHtml(app, elem);
 	}
 
 	static _handleDrawingConfig(app, html) {
-		const elem = html.find(`div[data-tab="position"]`);
+		const jqueryHtml = $(html);
+		const elem = jqueryHtml.find(`div[data-tab="position"]`);
 		this._applyHtml(app, elem);
 	}
 
 	static _handleAmbientLightConfig(app, html) {
-		let button = html.find(`button[name="submit"]`);
-		let elem = (button.length ? button : html.find(`button[type="submit"]`)).parent();
+		const jqueryHtml = $(html);
+		let button = jqueryHtml.find(`button[name="submit"]`);
+		let elem = (button.length ? button : jqueryHtml.find(`button[type="submit"]`)).parent();
 		this._applyHtml(app, elem, true);
 	}
 
 	static _handleGenericConfig(app, html) {
-		let button = html.find(`button[name="submit"]`);
-		let elem = (button.length ? button : html.find(`button[type="submit"]`));
+		const jqueryHtml = $(html);
+		let button = jqueryHtml.find(`button[name="submit"]`);
+		let elem = (button.length ? button : jqueryHtml.find(`button[type="submit"]`));
 		this._applyHtml(app, elem, true);
 	}
 
 	static _applyHtml(app, elem, insertBefore = false) {
 		if (!elem) return;
-		const object = app?.object?._object ?? app?.object;
+		const object = app?.object?._object ?? app?.object ?? app.document;
 		const tagDocument = object?.document ?? object;
 		tagManagers[tagDocument.uuid] = new TagManager(tagDocument, app, elem, insertBefore);
 	}
@@ -584,6 +590,7 @@ class TagManager {
 			if (!tagString) continue;
 			this.createTagElement(tagString, index)
 		}
+		this.tagContainer.style.display = this.tagContainer.children.length ? "flex" : "none";
 		this.app.setPosition({ height: "auto" });
 	}
 
@@ -802,15 +809,18 @@ const configHandlers = {
 	"TokenConfig": "_handleTokenConfig",
 	"TileConfig": "_handleTileConfig",
 	"DrawingConfig": "_handleDrawingConfig",
-	"AmbientLightConfig": "_handleAmbientLightConfig", // v9
-	"LightConfig": "_handleGenericConfig", // v8
+	"AmbientLightConfig": "_handleAmbientLightConfig", // v12
 	"WallConfig": "_handleGenericConfig",
 	"AmbientSoundConfig": "_handleGenericConfig",
 	"MeasuredTemplateConfig": "_handleGenericConfig",
 	"NoteConfig": "_handleGenericConfig"
 }
 
-Hooks.on("renderFormApplication", TaggerConfig._handleRenderFormApplication);
+for (const [configName, configHandler] of Object.entries(configHandlers)) {
+	Hooks.on(`render${configName}`, (app, html) => {
+		TaggerConfig[configHandler](app, html, true)
+	});
+}
 
 for (const obj of ["Actor", "Token", "Tile", "Drawing", "Wall", "Light", "AmbientLight", "AmbientSound", "MeasuredTemplate", "Note"]) {
 	Hooks.on(`preUpdate${obj}`, (...args) => TaggerHandler.applyUpdateTags(...args));

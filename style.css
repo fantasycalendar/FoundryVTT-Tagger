@@ -9,6 +9,7 @@ fieldset.tagger .tag-container .tag {
   padding: 5px 5px 5px 8px;
   border: 1px solid #9b9b9b;
   margin: 3px 3px 3px 0;
+  color: black;
   display: flex;
   align-items: center;
   border-radius: 5px;
