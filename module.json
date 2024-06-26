@@ -12,7 +12,7 @@
   ],
   "version": "This is auto replaced",
   "compatibility": {
-    "minimum": "10",
+    "minimum": "12",
     "verified": "12"
   },
   "scripts": [],
