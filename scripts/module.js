@@ -280,6 +280,7 @@ export default class Tagger {
 			...Array.from(scene.walls),
 			...Array.from(scene.drawings),
 			...Array.from(scene.notes),
+			...Array.from(scene.regions),
 		].deepFlatten().filter(Boolean)
 	}
 
@@ -413,6 +414,12 @@ class TaggerConfig {
 		let button = jqueryHtml.find(`button[name="submit"]`);
 		let elem = (button.length ? button : jqueryHtml.find(`button[type="submit"]`)).parent();
 		this._applyHtml(app, elem, true);
+	}
+
+	static _handleRegionConfig(app, html) {
+		const jqueryHtml = $(html);
+		const elem = jqueryHtml.find(`section[data-tab="identity"]`);
+		this._applyHtml(app, elem);
 	}
 
 	static _handleGenericConfig(app, html) {
@@ -810,10 +817,11 @@ const configHandlers = {
 	"TileConfig": "_handleTileConfig",
 	"DrawingConfig": "_handleDrawingConfig",
 	"AmbientLightConfig": "_handleAmbientLightConfig", // v12
+	"RegionConfig": "_handleRegionConfig",
 	"WallConfig": "_handleGenericConfig",
 	"AmbientSoundConfig": "_handleGenericConfig",
 	"MeasuredTemplateConfig": "_handleGenericConfig",
-	"NoteConfig": "_handleGenericConfig"
+	"NoteConfig": "_handleGenericConfig",
 }
 
 for (const [configName, configHandler] of Object.entries(configHandlers)) {
@@ -822,7 +830,7 @@ for (const [configName, configHandler] of Object.entries(configHandlers)) {
 	});
 }
 
-for (const obj of ["Actor", "Token", "Tile", "Drawing", "Wall", "Light", "AmbientLight", "AmbientSound", "MeasuredTemplate", "Note"]) {
+for (const obj of ["Actor", "Token", "Tile", "Drawing", "Wall", "AmbientLight", "AmbientSound", "MeasuredTemplate", "Note", "Region"]) {
 	Hooks.on(`preUpdate${obj}`, (...args) => TaggerHandler.applyUpdateTags(...args));
 	Hooks.on(`preCreate${obj}`, (...args) => TaggerHandler.preCreateApplyTags(...args));
 }

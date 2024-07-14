@@ -1,5 +1,6 @@
 fieldset.tagger {
   margin: 5px 0;
+  flex: auto;
 }
 fieldset.tagger .tag-container {
   display: flex;
@@ -7,9 +8,9 @@ fieldset.tagger .tag-container {
 }
 fieldset.tagger .tag-container .tag {
   padding: 5px 5px 5px 8px;
-  border: 1px solid #9b9b9b;
-  margin: 3px 3px 3px 0;
+  border: 1px solid rgb(155, 155, 155);
   color: black;
+  margin: 3px 3px 3px 0;
   display: flex;
   align-items: center;
   border-radius: 5px;
