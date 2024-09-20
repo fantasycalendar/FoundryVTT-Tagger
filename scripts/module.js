@@ -687,24 +687,23 @@ class TaggerHandler {
 
 		if (game.modules.get("monks-active-tiles")?.active) {
 			const monkActions = documentData?.flags?.["monks-active-tiles"]?.actions ?? [];
-			const names = ["location.name", "entity.name"];
-			const ids = ["location.id", "entity.id"];
 			monkActions.forEach((action, i) => {
-				for (const nameProperty of names) {
-					let locationName = foundry.utils.getProperty(action?.data, nameProperty);
-					if (locationName && locationName.startsWith("[Tagger] ")) {
-						const tags = locationName.replace("[Tagger] ", "");
-						const newTags = this.applyRules(tags).join(", ");
-						foundry.utils.setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + nameProperty, `[Tagger] ${newTags}`);
-					}
-				}
-
-				for (const idProperty of ids) {
-					let locationId = foundry.utils.getProperty(action?.data, idProperty);
-					if (locationId && locationId.startsWith("tagger:")) {
-						const tags = locationId.replace("tagger:", "");
-						const newTags = this.applyRules(tags).join(", ");
-						foundry.utils.setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + idProperty, `tagger:${newTags}`);
+				if (action?.data) {
+					for (const property of Object.keys(action?.data)) {
+						let locationName = foundry.utils.getProperty(action?.data, property + ".name");
+						if (locationName && locationName.startsWith("[Tagger] ")) {
+							const tags = locationName.replace("[Tagger] ", "");
+							const newTags = this.applyRules(tags).join(", ");
+							foundry.utils.setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + property + `.name`, `[Tagger] ${newTags}`);
+						}
+						
+						let locationId = foundry.utils.getProperty(action?.data, property + ".id");
+						console.log(locationId);
+						if (locationId && locationId.startsWith("tagger:")) {
+							const tags = locationId.replace("tagger:", "");
+							const newTags = this.applyRules(tags).join(", ");
+							foundry.utils.setProperty(documentData, `flags.monks-active-tiles.actions.${i}.data.` + property + `.id`, `tagger:${newTags}`);
+						}
 					}
 				}
 			});
