@@ -380,26 +380,19 @@ export default class Tagger {
 
 class TaggerConfig {
 
-	static _handleRenderFormApplication(app, html) {
-		const jqueryHtml = $(html);
-		let method = configHandlers[app.constructor.name];
-		if (!method) {
-			const key = Object.keys(configHandlers).find(name => app.constructor.name.includes(name));
-			if (!key) return;
-			method = configHandlers[key];
-		}
-		TaggerConfig[method](app, html, true);
-	}
+	static IS_V13 = false;
 
 	static _handleTokenConfig(app, html) {
 		const jqueryHtml = $(html);
-		const elem = jqueryHtml.find(`div[data-tab="character"]`);
+		const part = this.IS_V13 ? "identity" : "character";
+		const elem = jqueryHtml.find(`div[data-tab="${part}"]`);
 		this._applyHtml(app, elem);
 	}
 
 	static _handleTileConfig(app, html) {
 		const jqueryHtml = $(html);
-		const elem = jqueryHtml.find(`div[data-tab="basic"]`);
+		const part = this.IS_V13 ? "appearance" : "basic";
+		const elem = jqueryHtml.find(`div[data-tab="${part}"]`);
 		this._applyHtml(app, elem);
 	}
 
@@ -426,6 +419,9 @@ class TaggerConfig {
 		const jqueryHtml = $(html);
 		let button = jqueryHtml.find(`button[name="submit"]`);
 		let elem = (button.length ? button : jqueryHtml.find(`button[type="submit"]`));
+		if(this.IS_V13){
+			elem = elem.parent();
+		}
 		this._applyHtml(app, elem, true);
 	}
 
@@ -837,6 +833,7 @@ for (const obj of ["Actor", "Token", "Tile", "Drawing", "Wall", "AmbientLight", 
 
 Hooks.once('init', async function () {
 	registerHotkeysPre();
+	TaggerConfig.IS_V13 = foundry.utils.isNewerVersion(game.version, "13");
 })
 
 Hooks.once('ready', async function () {

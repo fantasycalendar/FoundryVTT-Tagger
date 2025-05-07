@@ -13,7 +13,8 @@
   "version": "This is auto replaced",
   "compatibility": {
     "minimum": "12",
-    "verified": "12"
+    "verified": "13",
+    "maximum": "13"
   },
   "scripts": [],
   "esmodules": [
