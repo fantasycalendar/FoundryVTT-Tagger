@@ -821,7 +821,10 @@ const configHandlers = {
 }
 
 for (const [configName, configHandler] of Object.entries(configHandlers)) {
-	Hooks.on(`render${configName}`, (app, html) => {
+	Hooks.on(`render${configName}`, (app, html, data, options) => {
+		if(options?.hasOwnProperty("isFirstRender") && !options["isFirstRender"]){
+			return;
+		}
 		TaggerConfig[configHandler](app, html, true)
 	});
 }
