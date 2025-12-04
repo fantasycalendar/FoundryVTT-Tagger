@@ -429,7 +429,7 @@ class TaggerConfig {
 		if (!elem) return;
 		const object = app?.object?._object ?? app?.object ?? app.document;
 		const tagDocument = object?.document ?? object;
-		tagManagers[tagDocument.uuid] = new TagManager(tagDocument, app, elem, insertBefore);
+        tagManagers[tagDocument.uuid] = new TagManager(tagDocument, app, elem, insertBefore);
 	}
 }
 
@@ -822,9 +822,6 @@ const configHandlers = {
 
 for (const [configName, configHandler] of Object.entries(configHandlers)) {
 	Hooks.on(`render${configName}`, (app, html, data, options) => {
-		if(options?.hasOwnProperty("isFirstRender") && !options["isFirstRender"]){
-			return;
-		}
 		TaggerConfig[configHandler](app, html, true)
 	});
 }
