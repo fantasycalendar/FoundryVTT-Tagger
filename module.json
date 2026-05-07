@@ -1,13 +1,12 @@
 {
   "id": "tagger",
-  "name": "tagger",
   "title": "Tagger",
   "description": "A global tags manager for easy manipulation of objects of similar types",
   "authors": [
     {
       "name": "Wasp",
       "discord": "Wasp#2005",
-      "website": "http://fantasycomputer.works/"
+      "url": "http://fantasycomputer.works/"
     }
   ],
   "version": "This is auto replaced",
@@ -16,7 +15,6 @@
     "verified": "14",
     "maximum": "14"
   },
-  "scripts": [],
   "esmodules": [
     "dist/tagger.js"
   ],
@@ -26,7 +24,7 @@
   "library": true,
   "flags": {
     "hotReload": {
-      "extensions": ["css", "json"],
+      "extensions": ["css"],
       "paths": ["dist/tagger.css"]
     }
   },
