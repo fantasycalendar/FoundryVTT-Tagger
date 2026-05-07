@@ -23,7 +23,52 @@ Like what we've done? Buy us a coffee!
 
 This module allows you to put unique tags on objects in scenes and use Tagger's powerful API to quickly retrieve them.
 
+## Placeables Sidebar
+
+On Foundry v14, the new Placeables sidebar tab (which lists every token, tile, light, etc. in the current scene) gets two Tagger features.
+
+### Tag Pills
+
+Each entry in the sidebar shows its tags as pills under the entry's name. No configuration is needed. If a placeable has tags, the pills appear.
+
+### `tag:` Search Prefix
+
+The sidebar's search box accepts `tag:` terms that filter entries by tag. Tag terms can be combined with the regular name search:
+
+| Query | Effect |
+| --- | --- |
+| `goblin` | Entries whose name contains "goblin" (Foundry's normal name search) |
+| `tag:enemy` | Entries that have a tag containing "enemy" |
+| `tag:"boss fight"` | Entries that have a tag containing the phrase "boss fight". Use quotes for tags with spaces. |
+| `tag:enemy tag:elite` | Entries that have **both** an "enemy" tag **and** an "elite" tag. Multiple `tag:` terms must all match. |
+| `tag:enemy goblin` | Entries with an "enemy" tag whose name also contains "goblin" |
+| `tag:foo*` | Entries that have a tag matching `foo` followed by anything. See wildcards below. |
+
+**Matching rules in the sidebar:**
+
+- **Case-insensitive.** `tag:Enemy` and `tag:enemy` behave the same.
+- **Substring by default.** `tag:enemy` will match tags like `enemy`, `enemyBoss`, and `arch-enemy`.
+- **Wildcards with `*`.** If your term contains `*`, the match uses the same wildcard syntax as `Tagger.getByTag`. `tag:foo*` matches `foo` followed by anything; `tag:*bar` matches anything ending in `bar`; `tag:foo*bar` matches anything starting with `foo` and ending with `bar`.
+
+### Pill Match States
+
+The sidebar's matching is more lenient than `Tagger.getByTag`. The API is case-sensitive and matches the whole tag by default, so `Tagger.getByTag("enemy")` will not return a placeable tagged `enemyBoss` or `Enemy`, even though both show up when you type `tag:enemy` in the sidebar.
+
+To make this clear, pills are drawn in three colors:
+
+- **Green** - the tag matches one of the active search terms exactly (or there is no active search). `Tagger.getByTag(term)` will return this entry.
+- **Amber** - the tag matches the search term, but only because the sidebar ignores case or allows substrings. `Tagger.getByTag(term)` with default options will not return it. Hover the pill for a tooltip explaining the mismatch.
+- **Gray** - the entry is shown because another tag on it matched, but this tag does not match any active search term.
+
+To get the API to return everything the sidebar shows, use one of:
+
+- `Tagger.getByTag("enemy", { caseInsensitive: true })` to ignore case
+- `Tagger.getByTag("*enemy*")` to match as a substring
+- `Tagger.getByTag("*enemy*", { caseInsensitive: true })` for both
+
 ## Supported Modules
+
+These may not fully work in v14, as the modules may not be updated, or Tagger's interpretation of these modules' data has not been fully updated to be in line with what they expect, please allow some grace here.
 
 - [Token Attacher](https://foundryvtt.com/packages/token-attacher/) - If you have tag rules (like `{#}`) on attached objects, they will get applied when the prefab is first created, even on nested attached objects
 - [Monks Active Tile Triggers](https://foundryvtt.com/packages/monks-active-tiles) - This module also integrates Tagger to be able to select objects in the scene in its actions, and similarly to above, tag rules are evaluated when an active tile is created, either manually or through Token Attacher!
@@ -45,13 +90,19 @@ Each tag is separated by a comma.
 ![img.png](docs/token-config.png)
 
 # Documentation
+
+> The block below is generated from the JSDoc in `src/tagger.js` (descriptions,
+> `@param`, `@returns`, and `@example` blocks). Edit the JSDoc and run
+> `npm run docs` to regenerate.
+
+<!-- API:START -->
 ## Functions
 
 <dl>
 <dt><a href="#getByTag">Tagger.getByTag(inTags, inOptions)</a> ⇒ <code>Array</code></dt>
 <dd><p>Gets PlaceableObjects with matching tags provided to the method</p>
 </dd>
-<dt><a href="#hasTags">Tagger.hasTags(inObject, inTags, inOptions)</a> ⇒ <code>Boolean</code></dt>
+<dt><a href="#hasTags">Tagger.hasTags(inObjects, inTags, inOptions)</a> ⇒ <code>Boolean</code></dt>
 <dd><p>Verifies whether a given PlaceableObject or Document has the tags given</p>
 </dd>
 <dt><a href="#getTags">Tagger.getTags(inObject)</a> ⇒ <code>Array</code></dt>
@@ -80,8 +131,6 @@ Each tag is separated by a comma.
 </dd>
 </dl>
 
-
-
 <a name="getByTag"></a>
 
 ## Tagger.getByTag(inTags, inOptions) ⇒ <code>Array</code>
@@ -97,16 +146,16 @@ const objects = Tagger.getByTag("tag_to_find", { matchExactly: true });
 
 Gets PlaceableObjects with matching tags provided to the method
 
-**Returns**: <code>Array</code> - Returns an array of filtered Documents based on the tags
+**Returns**: <code>Array</code> - Returns an array of filtered Documents (or PlaceableObjects when `returnObjects` is true) based on the tags
 
 | Param | Type | Description |
 | --- | --- | --- |
 | inTags | <code>String/RegExp/Array.&lt;String/RegExp&gt;</code> | An array of tags or a string of tags (separated by commas) that will be searched for |
-| inOptions | <code>Object</code> | An optional object that can contain any of the following:                                              <br>- matchAny {Boolean}        - whether the PlaceableObjects can contain any of the provided tags                                              <br>- matchExactly {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided                                              <br>- caseInsensitive {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)                                              <br>- allScenes {Boolean}       - whether to search in all scenes, this will return an object with the key                                                                            as the scene ID, and an array for objects found within that scene                                              <br>- objects {Array}           - an array of PlaceableObjects to test                                              <br>- ignore {Array}            - an array of PlaceableObjects to ignore                                              <br>- sceneId {String}          - a string ID for the scene to search in |
+| inOptions | <code>Object</code> | An optional object that can contain any of the following:                                             <br>- `matchAny` {Boolean}        - whether the PlaceableObjects can contain any of the provided tags                                             <br>- `matchExactly` {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided                                             <br>- `caseInsensitive` {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered)                                             <br>- `allScenes` {Boolean}       - whether to search in all scenes, this will return an object with the key as the scene ID, and an array for objects found within that scene                                             <br>- `objects` {Array}           - an array of PlaceableObjects to test                                             <br>- `ignore` {Array}            - an array of PlaceableObjects to ignore                                             <br>- `sceneId` {String}          - a string ID for the scene to search in                                             <br>- `returnObjects` {Boolean}   - if true, returns the canvas PlaceableObject instances instead of the underlying Documents (falls back to the Document when the placeable is not on the active canvas) |
 
 <a name="hasTags"></a>
 
-## Tagger.hasTags(inObject, inTags, inOptions) ⇒ <code>Boolean</code>
+## Tagger.hasTags(inObjects, inTags, inOptions) ⇒ <code>Boolean</code>
 
 Examples:
 ```js
@@ -123,15 +172,15 @@ Verifies whether a given PlaceableObject or Document has the tags given
 
 | Param | Type | Description |
 | --- | --- | --- |
-| inObject | <code>PlaceableObject</code> | A PlaceableObject, or an array of PlaceableObjects to check for tags on |
+| inObjects | <code>PlaceableObject/Array</code> | A PlaceableObject, or an array of PlaceableObjects to check for tags on |
 | inTags | <code>String/Array</code> | An array of tags or a string of tags (separated by commas) that will be searched for |
-| inOptions | <code>Object</code> | An optional object that can contain any of the following:                                              <br>- matchAny {Boolean}        - whether the PlaceableObjects can contain any of the provided tags                                              <br>- matchExactly {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided                                              <br>- caseInsensitive {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered) |
+| inOptions | <code>Object</code> | An optional object that can contain any of the following:                                             <br>- `matchAny` {Boolean}        - whether the PlaceableObjects can contain any of the provided tags                                             <br>- `matchExactly` {Boolean}    - whether the tags on the PlaceableObjects must contain ONLY the tags provided                                             <br>- `caseInsensitive` {Boolean} - whether the search is case insensitive (capitals vs lowercase is not considered) |
 
 <a name="getTags"></a>
 
 ## Tagger.getTags(inObject) ⇒ <code>Array</code>
 
-Examples:
+Example:
 ```js
 // If the token has several tags, this method will return all of those tags as an array
 const tags = Tagger.getTags(token);
@@ -148,6 +197,7 @@ Gets all tags from a given PlaceableObject or Document
 <a name="setTags"></a>
 
 ## Tagger.setTags(inObjects, inTags) ⇒ <code>Promise</code>
+
 Examples:
 ```js
 // Sets the tags on the token to be ONLY "tag_to_set"
@@ -172,6 +222,7 @@ Set the tags on an PlaceableObject or Document, **completely overwriting existin
 <a name="toggleTags"></a>
 
 ## Tagger.toggleTags(inObjects, inTags) ⇒ <code>Promise</code>
+
 Examples:
 ```js
 // If the token had the tag "tag_to_toggle", it no longer has it
@@ -190,12 +241,13 @@ Toggles the tags on an PlaceableObject or Document. If a tag is present, it will
 
 | Param | Type | Description |
 | --- | --- | --- |
-| inObjects | <code>PlaceableObject/Array</code> | A PlaceableObject, or an array of PlaceableObjects to set tags on |
-| inTags | <code>String/Array</code> | An array of tags or a string of tags (separated by commas) that will override all tags on the PlaceableObjects |
+| inObjects | <code>PlaceableObject/Array</code> | A PlaceableObject, or an array of PlaceableObjects to toggle tags on |
+| inTags | <code>String/Array</code> | An array of tags or a string of tags (separated by commas) that will be toggled on the PlaceableObjects |
 
 <a name="addTags"></a>
 
 ## Tagger.addTags(inObjects, inTags) ⇒ <code>Promise</code>
+
 Example:
 ```js
 // Adds "tag_to_add" to the token's existing tags
@@ -214,6 +266,7 @@ Adds tags to an object
 <a name="removeTags"></a>
 
 ## Tagger.removeTags(inObjects, inTags) ⇒ <code>Promise</code>
+
 Example:
 ```js
 // Removes "tag_to_remove" from the token's tags
@@ -232,6 +285,7 @@ Removes tags from an object
 <a name="clearAllTags"></a>
 
 ## Tagger.clearAllTags(inObjects) ⇒ <code>Promise</code>
+
 Example:
 ```js
 // Clears all tags from the given object
@@ -249,6 +303,7 @@ Removes all tags from PlaceableObjects
 <a name="applyTagRules"></a>
 
 ## Tagger.applyTagRules(inObjects) ⇒ <code>Promise</code>
+
 Example:
 ```js
 // If the token has a tag that looks like this: "test_{#}_tag", running this method:
@@ -272,3 +327,4 @@ Applies all tag rules to every tag found on the given PlaceableObjects
 | -------- | ----------- |
 | `{#}` | The `{#}` gets replaced with an unique number, and the number depends on how many other objects in the scene also has that tag |
 | `{id}` | The `{id}` gets replaced with an unique ID |
+<!-- API:END -->

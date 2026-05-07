@@ -1,0 +1,132 @@
+fieldset.tagger {
+  margin: 5px 0;
+  flex: auto;
+  --tagger-tag-bg: #eeede0;
+  --tagger-tag-bg-hover: #fffdd4;
+  --tagger-tag-bg-delete: #ffb6b6;
+  --tagger-tag-bg-drop: #c6eaa7;
+  --tagger-tag-fg: var(--color-text-primary, #191813);
+  --tagger-tag-border: rgba(0, 0, 0, 0.35);
+  --tagger-tag-fg-hover: #834100;
+  --tagger-tag-fg-delete: #e30f0f;
+}
+fieldset.tagger .tag-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+fieldset.tagger .tag-container .tag {
+  padding: 4px 6px 4px 8px;
+  border: 1px solid var(--tagger-tag-border);
+  color: var(--tagger-tag-fg);
+  margin: 3px 3px 3px 0;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  background: var(--tagger-tag-bg);
+}
+fieldset.tagger .tag-container .tag.dropping {
+  background: var(--tagger-tag-bg-drop);
+}
+fieldset.tagger .tag-container .tag > * {
+  cursor: pointer;
+}
+fieldset.tagger .tag-container .tag span:hover {
+  color: var(--tagger-tag-fg-hover);
+}
+fieldset.tagger .tag-container .tag i {
+  font-size: 1rem;
+  padding: 0 5px;
+}
+fieldset.tagger .tag-container .tag i:hover {
+  color: var(--tagger-tag-fg-delete);
+}
+fieldset.tagger .tag-container .tag:has(i:hover) {
+  background-color: var(--tagger-tag-bg-delete);
+}
+fieldset.tagger .tag-container .tag:has(span:hover) {
+  background-color: var(--tagger-tag-bg-hover);
+}
+fieldset.tagger .form-group button {
+  flex: 0;
+  height: 28px;
+  width: 28px;
+  line-height: inherit;
+  font-size: 0.75rem;
+  margin-left: 10px;
+}
+
+.placeable-tab .placeable-entry {
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+.tagger-pills {
+  --tagger-pill-bg: #2f855a;
+  --tagger-pill-fg: var(--color-light-1, #f7f3e8);
+  --tagger-pill-border: rgba(0, 0, 0, 0.35);
+  --tagger-pill-partial-bg: #d18b1a;
+  --tagger-pill-partial-fg: var(--color-light-1, #f7f3e8);
+  --tagger-pill-unmatched-bg: #6b6b6b;
+  --tagger-pill-unmatched-fg: var(--color-light-1, #f7f3e8);
+  --tagger-pill-neutral-bg: #eeede0;
+  --tagger-pill-neutral-fg: var(--color-text-primary, #191813);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 4px;
+  width: 100%;
+  flex-basis: 100%;
+  margin: 0;
+  padding: 0;
+}
+.tagger-pills .tagger-pill {
+  display: inline-block;
+  padding: 1px 8px;
+  font-size: var(--font-size-12, 12px);
+  line-height: 1.5;
+  border-radius: 999px;
+  background: var(--tagger-pill-bg);
+  color: var(--tagger-pill-fg);
+  border: 1px solid var(--tagger-pill-border);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: filter 120ms ease;
+}
+.tagger-pills .tagger-pill:hover {
+  filter: brightness(1.1);
+}
+.tagger-pills .tagger-pill.tagger-pill-partial {
+  background: var(--tagger-pill-partial-bg);
+  color: var(--tagger-pill-partial-fg);
+}
+.tagger-pills .tagger-pill.tagger-pill-unmatched {
+  background: var(--tagger-pill-unmatched-bg);
+  color: var(--tagger-pill-unmatched-fg);
+}
+.tagger-pills .tagger-pill.tagger-pill-neutral {
+  background: var(--tagger-pill-neutral-bg);
+  color: var(--tagger-pill-neutral-fg);
+}
+
+body.theme-dark fieldset.tagger {
+  --tagger-tag-bg: #2a2823;
+  --tagger-tag-bg-hover: #3a3527;
+  --tagger-tag-bg-delete: #5d2a2a;
+  --tagger-tag-bg-drop: #2f4a2a;
+  --tagger-tag-fg: var(--color-text-primary, #efe6d8);
+  --tagger-tag-border: rgba(255, 255, 255, 0.2);
+  --tagger-tag-fg-hover: #ffb86a;
+  --tagger-tag-fg-delete: #ff6b6b;
+}
+body.theme-dark .tagger-pills {
+  --tagger-pill-border: rgba(255, 255, 255, 0.25);
+  --tagger-pill-partial-bg: #e0a02a;
+  --tagger-pill-partial-fg: #1a1a1a;
+  --tagger-pill-unmatched-bg: #555a60;
+  --tagger-pill-unmatched-fg: #d8d8d8;
+  --tagger-pill-neutral-bg: #2a2823;
+  --tagger-pill-neutral-fg: var(--color-text-primary, #efe6d8);
+}
+
+/*# sourceMappingURL=module.css.map */
